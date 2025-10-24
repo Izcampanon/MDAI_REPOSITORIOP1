@@ -46,6 +46,11 @@ public class Evento {
         this.local = local;
     }
 
+    // GETTERS Y SETTERS
+    public Long getId() {
+        return id;
+    }
+
     public String getTitulo() {
         return titulo;
     }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 public class Compra_Entrada {
@@ -14,15 +15,18 @@ public class Compra_Entrada {
 
     private Date fechaCompra;
     private float precio;
-    private List<Entrada> tipo_entradas;
+
+    // Lista de entradas asociadas a esta compra: definir como relacion OneToMany con tabla intermedia
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "compra_entrada_entardas",
+            joinColumns = @JoinColumn(name = "compra_entrada_id"),
+            inverseJoinColumns = @JoinColumn(name = "entrada_id"))
+    private List<Entrada> tipo_entradas = new ArrayList<>();
 
     @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
-    @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn(name = "entrada_id")
-    private Entrada Entrada;
 
     public Compra_Entrada() {
     }
@@ -40,13 +44,8 @@ public class Compra_Entrada {
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
-
-    public Entrada getEntrada() {
-        return Entrada;
-    }
-
-    public void setEntrada(Entrada entrada) {
-        Entrada = entrada;
+    public Long getId() {
+        return id;
     }
 
     public Date getFechaCompra() {

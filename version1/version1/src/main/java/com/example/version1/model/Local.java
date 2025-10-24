@@ -29,6 +29,10 @@ public class Local {
         this.nombre = nombre;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getNombre() {
         return nombre;
     }

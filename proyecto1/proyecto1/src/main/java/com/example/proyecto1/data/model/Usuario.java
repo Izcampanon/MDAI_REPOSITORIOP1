@@ -1,4 +1,4 @@
-package com.example.proyecto1;
+package com.example.proyecto1.data.model;
 
 import jakarta.persistence.*;
 
@@ -15,7 +15,7 @@ public class Usuario {
     private String nombre;
     private String email;
 
-    @OneToMany (mappedBy = "usuario")
+    @OneToMany (mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<Direccion> direcciones =new ArrayList<>();
 
     public Usuario() {

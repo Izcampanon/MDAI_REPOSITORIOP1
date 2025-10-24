@@ -81,4 +81,19 @@ public class Usuario {
         this.telefono = telefono;
     }
 
+    public List<Compra_Entrada> getEntardas_compradas() {
+        return entardas_compradas;
+    }
+
+    public void setEntardas_compradas(List<Compra_Entrada> entardas_compradas) {
+        this.entardas_compradas = entardas_compradas;
+    }
+
+    public Ubicacion getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(Ubicacion ubicacion) {
+        this.ubicacion = ubicacion;
+    }
 }

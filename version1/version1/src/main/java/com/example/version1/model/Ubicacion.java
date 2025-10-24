@@ -1,6 +1,7 @@
 package com.example.version1.model;
 
 import jakarta.persistence.*;
+import org.antlr.v4.runtime.misc.LogManager;
 
 import java.util.List;
 
@@ -25,6 +26,10 @@ public class Ubicacion {
     public Ubicacion(Long id, String nombre) {
         this.id = id;
         this.nombre = nombre;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getNombre() {
