@@ -3,6 +3,7 @@ package com.example.version1.model;
 import jakarta.persistence.*;
 import org.antlr.v4.runtime.misc.LogManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,7 +16,7 @@ public class Ubicacion {
     private String nombre;
 
     @OneToMany(mappedBy = "ubicacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Usuario> usuarios;
+    private List<Usuario> usuarios = new ArrayList<>();
 
     @OneToMany(mappedBy = "ubicacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Local> locales;
@@ -55,4 +56,18 @@ public class Ubicacion {
     public void setLocales(List<Local> locales) {
         this.locales = locales;
     }
+
+
+    // helpers para mantener ambas caras de la relación
+    public void addUsuario(Usuario u) {
+        usuarios.add(u);
+        u.setUbicacion(this);
+    }
+
+    public void removeUsuario(Usuario u) {
+        usuarios.remove(u);
+        u.setUbicacion(null);
+    }
+
+
 }

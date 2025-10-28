@@ -22,7 +22,8 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Compra_Entrada> entardas_compradas = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "ubicacion_id")
     private Ubicacion ubicacion;
 
     public Usuario() {

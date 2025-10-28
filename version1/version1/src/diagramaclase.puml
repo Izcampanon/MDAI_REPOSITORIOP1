@@ -1,0 +1,94 @@
+@startuml
+title Diagrama de clases - version1
+skinparam classAttributeIconSize 0
+
+' Clases principales
+class Usuario {
+	- Long id
+	- String nombre
+	- String email
+	- String password
+	- float saldo
+	--
+	+ List<Compra> compras
+}
+
+class Compra {
+	- Long id
+	- LocalDateTime fechaCompra
+	- float total
+	- int cantidadEntradas
+	- String estado
+	--
+	+ Usuario usuario
+	+ Evento evento
+	+ List<Entrada> entradas
+}
+
+class Evento {
+	- Long id
+	- String nombre
+	- LocalDateTime fecha
+	- String ubicacion
+	- String descripcion
+	- int aforo
+	- int entradasDisponibles
+	- float precio
+	- boolean activo
+	- String estado
+	--
+	+ List<Entrada> entradas
+	+ List<Artista> artistas
+	+ List<Compra> compras
+}
+
+class Entrada {
+	- Long id
+	- String codigoQr
+	- String tipo
+	- int consumicionesIncluidas
+	- float precio
+	- LocalDateTime fechaCompra
+	- String estado
+	--
+	+ Evento evento
+	+ Compra compra
+}
+
+class Artista {
+	- Long id
+	- String nombre
+	- String genero
+	- String foto
+	- String redesSociales
+	--
+	+ List<Evento> eventos
+}
+
+' Relaciones
+Usuario "1" --> "0..*" Compra : realiza
+Compra "*" --> "1" Usuario : pertenece_a
+
+Evento "1" --> "0..*" Compra : tiene
+Compra "*" --> "1" Evento : sobre
+
+Evento "1" --> "0..*" Entrada : genera
+Entrada "*" --> "1" Evento : pertenece_a
+
+Compra "1" --> "0..*" Entrada : contiene
+Entrada "*" --> "1" Compra : parte_de
+
+' Many-to-Many entre Evento y Artista
+Artista "0..*" -- "0..*" Evento : participa_en
+
+note left of Artista
+	Relación bidireccional
+	(mappedBy = "artistas")
+end note
+
+note right of Evento
+	Tabla intermedia: evento_artista
+end note
+
+@enduml
+

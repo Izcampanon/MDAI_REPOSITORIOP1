@@ -29,6 +29,13 @@ public class Local {
         this.nombre = nombre;
     }
 
+    public Local(Long id, String nombre, Ubicacion ubicacion) {
+        this.id = id;
+        this.nombre = nombre;
+        this.ubicacion = ubicacion;
+    }
+
+
     public Long getId() {
         return id;
     }
