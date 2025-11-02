@@ -3,6 +3,7 @@ package com.example.version1.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,7 +19,7 @@ public class Local {
     private Ubicacion ubicacion;
 
     @OneToMany (mappedBy = "local", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Evento> eventos;
+    private List<Evento> eventos = new ArrayList<>();
 
 
     public Local() {
@@ -62,5 +63,16 @@ public class Local {
 
     public void setEventos(List<Evento> eventos) {
         this.eventos = eventos;
+    }
+
+    // helpers para mantener la relación bidireccional con Evento
+    public void addEvento(Evento e) {
+        eventos.add(e);
+        e.setLocal(this);
+    }
+
+    public void removeEvento(Evento e) {
+        eventos.remove(e);
+        e.setLocal(null);
     }
 }

@@ -9,7 +9,6 @@ import com.example.version1.repository.RepositoryUsuario;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -66,21 +65,21 @@ public class UbicacionTest {
         Ubicacion ubicacion = new Ubicacion(null, "Bilbao");
         ubicacion = ubicacionRepository.save(ubicacion);
 
-        // 2. Crear y guardar Usuario 1 asociado a "Bilbao"
+        // 2. Crear y asociar Usuario 1 a "Bilbao" usando el helper
         Usuario usuario1 = new Usuario("Iker", "iker@test.com", "pass1", true, "111");
-        usuario1.setUbicacion(ubicacion);
+        ubicacion.addUsuario(usuario1);
         usuarioRepository.save(usuario1);
 
-        // 3. Crear y guardar Usuario 2 asociado a "Bilbao"
+        // 3. Crear y asociar Usuario 2 a "Bilbao" usando el helper
         Usuario usuario2 = new Usuario("Leire", "leire@test.com", "pass2", true, "222");
-        usuario2.setUbicacion(ubicacion);
+        ubicacion.addUsuario(usuario2);
         usuarioRepository.save(usuario2);
 
         // 4. Crear un Usuario en otra Ubicacion (para asegurar el aislamiento)
         Ubicacion otraUbicacion = new Ubicacion(null, "Donostia");
         otraUbicacion = ubicacionRepository.save(otraUbicacion);
         Usuario usuario3 = new Usuario("Aitor", "aitor@test.com", "pass3", true, "333");
-        usuario3.setUbicacion(otraUbicacion);
+        otraUbicacion.addUsuario(usuario3);
         usuarioRepository.save(usuario3);
 
         // 5. Recuperar la Ubicacion principal
@@ -106,14 +105,16 @@ public class UbicacionTest {
         Ubicacion ubicacion = new Ubicacion(null, "Sevilla");
         ubicacion = ubicacionRepository.save(ubicacion);
 
-        // 2. Crear y guardar locales asociados a la ubicacion
-        Local local1 = new Local(null, "Bar A", ubicacion);
-        Local local2 = new Local(null, "Bar B", ubicacion);
+        // 2. Crear y asociar locales a la ubicacion usando el helper
+        Local local1 = new Local(null, "Bar A");
+        ubicacion.addLocal(local1);
+        Local local2 = new Local(null, "Bar B");
+        ubicacion.addLocal(local2);
         localRepository.saveAll(Arrays.asList(local1, local2));
 
         // 3. Crear y guardar usuario asociado a la misma ubicacion
         Usuario usuario = new Usuario("Pepito", "pepito@test.com", "pass", true, "000");
-        usuario.setUbicacion(ubicacion);
+        ubicacion.addUsuario(usuario);
         usuario = usuarioRepository.save(usuario);
 
         // 4. Recuperar usuario y obtener su ubicacion
@@ -128,6 +129,20 @@ public class UbicacionTest {
         assertEquals(2, locales.size(), "Debe haber 2 locales asociados a la ubicacion");
         assertTrue(locales.stream().anyMatch(l -> "Bar A".equals(l.getNombre())));
         assertTrue(locales.stream().anyMatch(l -> "Bar B".equals(l.getNombre())));
+    }
+
+    @Test
+    void comprobarLocalesinicialesUbicacion() {
+        // Crear y guardar una Ubicacion sin locales
+        Ubicacion ubicacion = new Ubicacion(null, "Valencia");
+        ubicacion = ubicacionRepository.save(ubicacion);
+
+        // Recuperar la Ubicacion y verificar que la lista de locales está vacía
+        Ubicacion ubicacionRecuperada = ubicacionRepository.findById(ubicacion.getId()).orElse(null);
+        assertNotNull(ubicacionRecuperada, "La ubicacion debe ser recuperada");
+        List<Local> locales = ubicacionRecuperada.getLocales();
+        assertNotNull(locales, "La lista de locales no debe ser null");
+        assertTrue(locales.isEmpty(), "La lista de locales debe estar vacía inicialmente");
     }
 
 }
