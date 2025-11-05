@@ -75,4 +75,26 @@ public class Local {
         eventos.remove(e);
         e.setLocal(null);
     }
+
+    //Solo se añadiran los eventos que esten disponibles
+    public List<Evento> getEventosDisponibles() {
+        List<Evento> disponibles = new ArrayList<>();
+        for (Evento e : eventos) {
+            // Primero, si el campo estado está marcado true, lo añadimos
+            if (Boolean.TRUE.equals(e.getEstado())) {
+                disponibles.add(e);
+                continue;
+            }
+            // Si el campo estado es null o false, pero no confiamos sólo en el campo
+            // podemos evaluar la disponibilidad en tiempo real (sin usuario -> solo fecha/aforo)
+            try {
+                if (e.getEstado() == null && e.estadoDiponible(null)) {
+                    disponibles.add(e);
+                }
+            } catch (Exception ex) {
+                // Ignorar si por alguna razón la evaluación falla
+            }
+        }
+        return disponibles;
+    }
 }

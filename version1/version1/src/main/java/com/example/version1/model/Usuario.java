@@ -16,7 +16,7 @@ public class Usuario {
     private String nombre;
     private String email;
     private String contrasenia;
-    private boolean edad;
+    private int edad;
     private String telefono;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -29,7 +29,7 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(String nombre, String email, String contrasenia, boolean edad, String telefono) {
+    public Usuario(String nombre, String email, String contrasenia, int edad, String telefono) {
         this.nombre = nombre;
         this.email = email;
         this.contrasenia = contrasenia;
@@ -66,11 +66,11 @@ public class Usuario {
         this.contrasenia = contrasenia;
     }
 
-    public boolean isEdad() {
+    public int getEdad() {
         return edad;
     }
 
-    public void setEdad(boolean edad) {
+    public void setEdad(int edad) {
         this.edad = edad;
     }
 

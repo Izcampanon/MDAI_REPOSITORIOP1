@@ -15,12 +15,12 @@ public class Evento {
     private String titulo;
     private LocalDateTime fecha;
     private String artista;
-    private String ubicacion;
+    private String direccion;
     private String descripcion;
     private int aforo;
-    private String estado; //disponible proximo acabado
-    private String tipo; //+18 -18
-    private boolean estado_aforo; //completo incompleto
+    private Boolean estado; //disponible (true) /no disponible(false)
+    private int edadpermitida; //+18 -18
+
 
     // RELACIONES
     @OneToMany(mappedBy = "evento", cascade = CascadeType.ALL)
@@ -33,16 +33,15 @@ public class Evento {
     // CONSTRUCTORES
     public Evento() {}
 
-    public Evento(String titulo, LocalDateTime fecha, String artista, String ubicacion, String descripcion, int aforo, String estado, String tipo, boolean estado_aforo, Local local) {
+    public Evento(String titulo, LocalDateTime fecha, String artista, String direccion, String descripcion, int aforo, Boolean estado, int edadpermitida, Local local) {
         this.titulo = titulo;
         this.fecha = fecha;
         this.artista = artista;
-        this.ubicacion = ubicacion;
+        this.direccion = direccion;
         this.descripcion = descripcion;
         this.aforo = aforo;
         this.estado = estado;
-        this.tipo = tipo;
-        this.estado_aforo = estado_aforo;
+        this.edadpermitida = edadpermitida;
         this.local = local;
     }
 
@@ -75,12 +74,12 @@ public class Evento {
         this.artista = artista;
     }
 
-    public String getUbicacion() {
-        return ubicacion;
+    public String getDireccion() {
+        return direccion;
     }
 
-    public void setUbicacion(String ubicacion) {
-        this.ubicacion = ubicacion;
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
     }
 
     public String getDescripcion() {
@@ -99,28 +98,20 @@ public class Evento {
         this.aforo = aforo;
     }
 
-    public String getEstado() {
+    public Boolean getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    public void setEstado(Boolean estado) {
         this.estado = estado;
     }
 
-    public String getTipo() {
-        return tipo;
+    public int getEdadpermitda() {
+        return edadpermitida;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
-    public boolean isEstado_aforo() {
-        return estado_aforo;
-    }
-
-    public void setEstado_aforo(boolean estado_aforo) {
-        this.estado_aforo = estado_aforo;
+    public void setEdadpermitida(int edadpermitida) {
+        this.edadpermitida = edadpermitida;
     }
 
     public List<Entrada> getEntradas() {
@@ -138,6 +129,50 @@ public class Evento {
     public void setLocal(Local local) {
         this.local = local;
     }
+
+    public int getEdadpermitida(){
+        return edadpermitida;
+    }
+
+    public boolean estadoDiponible(Usuario usuario) {
+        boolean disponible = true;
+
+        java.time.LocalDateTime ahora = java.time.LocalDateTime.now();
+
+        // 1) Fecha: disponible si la fecha NO ha pasado (futura o igual a ahora)
+        if (this.getFecha() == null) {
+            disponible = false;
+        } else if (this.getFecha().isBefore(ahora)) { // si ya pasó -> no disponible
+            disponible = false;
+        }
+
+        // 2) Aforo: si entradas >= aforo -> no disponible
+        int entradasCount = (this.getEntradas() == null) ? 0 : this.getEntradas().size();
+        int aforo = this.getAforo(); // primitivo int
+        if (aforo >= 0 && entradasCount >= aforo) {
+            disponible = false;
+        }
+
+        // 3) Edad mínima: usar el getter existente (getEdadpermitda)
+        int edadMinima = this.getEdadpermitda(); // primitivo int
+        if (edadMinima > 0) {
+            if (usuario == null) {
+                disponible = false;
+            } else {
+                if (usuario.getEdad() < edadMinima) {
+                    disponible = false;
+                }
+            }
+        }
+
+        // actualizar campo estado para que los tests que filtran por él funcionen
+        this.setEstado(Boolean.valueOf(disponible));
+        return disponible;
+    }
+
+
+
+
 }
 
 

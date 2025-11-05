@@ -16,6 +16,9 @@ public class Compra_Entrada {
     private Date fechaCompra;
     private float precio;
 
+    private List<String> nombreAsistentes;
+
+
     // Lista de entradas asociadas a esta compra: definir como relacion OneToMany con tabla intermedia
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "compra_entrada_entardas",

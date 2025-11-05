@@ -15,8 +15,8 @@ public class Entrada {
 
     private String nombre_evento;
     private String nombre_usuario;
-    private boolean consumiciones; //TRUE (incluye consumicion) FALSE (no incluye consumicion)
     private String tipo; // GENERAL, VIP
+    private int cantidad_consumiciones;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,13 +29,13 @@ public class Entrada {
     // CONSTRUCTORES
     public Entrada() {}
 
-    public Entrada(String nombre_evento, String nombre_usuario, boolean consumiciones, String tipo, Usuario usuario, Evento evento) {
-        this.nombre_evento = nombre_evento;
-        this.nombre_usuario = nombre_usuario;
-        this.consumiciones = consumiciones;
+    public Entrada(String tipo, Usuario usuario, Evento evento, int cantidad_consumiciones) {
+        this.nombre_evento = evento.getTitulo();
+        this.nombre_usuario = usuario.getNombre();
         this.tipo = tipo;
         this.usuario = usuario;
         this.evento = evento;
+        this.cantidad_consumiciones = cantidad_consumiciones;
     }
 
     // GETTERS Y SETTERS
@@ -47,24 +47,8 @@ public class Entrada {
         return nombre_evento;
     }
 
-    public void setNombre_evento(String nombre_evento) {
-        this.nombre_evento = nombre_evento;
-    }
-
     public String getNombre_usuario() {
         return nombre_usuario;
-    }
-
-    public void setNombre_usuario(String nombre_usuario) {
-        this.nombre_usuario = nombre_usuario;
-    }
-
-    public boolean isConsumiciones() {
-        return consumiciones;
-    }
-
-    public void setConsumiciones(boolean consumiciones) {
-        this.consumiciones = consumiciones;
     }
 
     public String getTipo() {
@@ -90,4 +74,13 @@ public class Entrada {
     public void setEvento(Evento evento) {
         this.evento = evento;
     }
+    public int getCantidad_consumiciones() {
+        return cantidad_consumiciones;
+    }
+    public void setCantidad_consumiciones(int cantidad_consumiciones) {
+        this.cantidad_consumiciones = cantidad_consumiciones;
+    }
+
+
+
 }

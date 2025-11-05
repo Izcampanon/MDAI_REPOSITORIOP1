@@ -2,8 +2,11 @@ package com.example.version1.clases;
 
 import com.example.version1.model.Local;
 import com.example.version1.model.Ubicacion;
+import com.example.version1.model.Usuario;
+import com.example.version1.model.Evento;
 import com.example.version1.repository.RepositoryLocal;
 import com.example.version1.repository.RepositoryUbicacion;
+import com.example.version1.repository.RepositoryUsuario;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +23,9 @@ public class LocalTest {
 
     @Autowired
     private RepositoryUbicacion ubicacionRepository;
+
+    @Autowired
+    private RepositoryUsuario usuarioRepository;
 
     @Test
     void crearLocal_sePersisteYRelacionConUbicacion() {
@@ -96,5 +102,102 @@ public class LocalTest {
         assertNotNull(local.getEventos(), "La lista de eventos no debe ser null al crear un Local");
         assertTrue(local.getEventos().isEmpty(), "La lista de eventos debe estar vacía al crear un Local");
     }
+
+
+    @Test
+    void mostrarEventosDisponibles() {
+        // Crear usuario con edad suficiente (>=18)
+        Usuario usuario = new Usuario();
+        usuario.setEdad(25);
+        usuario = usuarioRepository.save(usuario);
+
+        // Crear local
+        Local local = new Local(null, "Sala Ensayo");
+
+        // Evento disponible: fecha futura, aforo > entradas (no entradas), edad OK
+        Evento e1 = new Evento();
+        e1.setTitulo("Disponible 1");
+        e1.setFecha(java.time.LocalDateTime.now().plusDays(1));
+        e1.setAforo(100);
+        // Capturar el resultado de la comprobación y asignarlo al campo estado
+        boolean dispo1 = e1.estadoDiponible(usuario);
+        e1.setEstado(Boolean.valueOf(dispo1));
+
+        // Evento no disponible por fecha pasada
+        Evento e2 = new Evento();
+        e2.setTitulo("No disponible - fecha pasada");
+        e2.setFecha(java.time.LocalDateTime.now().minusDays(5));
+        e2.setAforo(100);
+        boolean dispo2 = e2.estadoDiponible(usuario);
+        e2.setEstado(Boolean.valueOf(dispo2));
+
+        // Evento no disponible por aforo completo (aunque la fecha sea futura)
+        Evento e3 = new Evento();
+        e3.setTitulo("No disponible - aforo lleno");
+        e3.setFecha(java.time.LocalDateTime.now().plusDays(1));
+        e3.setAforo(0); // aforo 0 => entradas.size() (0) >= aforo (0) -> no disponible
+        boolean dispo3 = e3.estadoDiponible(usuario);
+        e3.setEstado(Boolean.valueOf(dispo3));
+
+        // Asociar al local
+        local.addEvento(e1);
+        local.addEvento(e2);
+        local.addEvento(e3);
+
+        // Persistir y forzar flush
+        local = localRepository.save(local);
+        localRepository.flush();
+
+        // Recuperar y obtener eventos disponibles mediante el método del Local
+        Local fetched = localRepository.findById(local.getId()).orElseThrow();
+        var disponibles = fetched.getEventosDisponibles();
+
+        // Comprobaciones: sólo e1 debe aparecer como disponible
+        assertNotNull(disponibles, "La lista de eventos disponibles no debe ser null");
+        assertEquals(1, disponibles.size(), "Debe haber exactamente 1 evento disponible");
+        assertTrue(disponibles.stream().anyMatch(ev -> "Disponible 1".equals(ev.getTitulo())),
+                "La lista debe contener 'Disponible 1'");
+        // Asegurar que todos los devueltos tienen estado true
+        assertTrue(disponibles.stream().allMatch(ev -> Boolean.TRUE.equals(ev.getEstado())),
+                "Todos los eventos devueltos deben tener estado true (disponible)");
+    }
+
+
+
+    //Test donde el usuario seleccione un local muestre lista de eventos
+    @Test
+    void usuarioSeleccionaLocal_mostrarEventos() {
+        // Crear local y eventos en memoria
+        Local local = new Local(null, "Auditorio Central");
+        com.example.version1.model.Evento e1 = new com.example.version1.model.Evento();
+        com.example.version1.model.Evento e2 = new com.example.version1.model.Evento();
+
+        // Asociar eventos al local (helper mantiene la relación bidireccional)
+        local.addEvento(e1);
+        local.addEvento(e2);
+
+        // Persistir el local (CascadeType.ALL persiste los eventos)
+        local = localRepository.save(local);
+        localRepository.flush();
+
+        Long localId = local.getId();
+        assertNotNull(localId, "El local debe tener id tras persistir");
+
+        // Recuperar el local como si lo seleccionara un usuario
+        Local fetched = localRepository.findById(localId).orElseThrow();
+
+        // Comprobaciones: la lista se muestra (no nula) y contiene los 2 eventos
+        assertNotNull(fetched.getEventos(), "La lista de eventos no debe ser null");
+        assertEquals(2, fetched.getEventos().size(), "Debe mostrar 2 eventos asociados al local");
+
+        // Comprobar que cada evento referencia al local recuperado (comparando ids)
+        fetched.getEventos().forEach(ev -> {
+            assertNotNull(ev.getLocal(), "El evento debe tener referencia al local");
+            assertNotNull(ev.getLocal().getId(), "El local referenciado en el evento debe tener id");
+            assertEquals(localId, ev.getLocal().getId(), "El evento debe referenciar al local seleccionado");
+        });
+    }
+
+
 
 }

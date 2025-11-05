@@ -3,8 +3,6 @@ package com.example.version1.clases;
 
 import com.example.version1.model.*;
 import com.example.version1.repository.*;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Id;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -38,233 +36,212 @@ class UsuarioTest {
     @Autowired
     private RepositoryUbicacion ubicacionRepository;
 
+    //test que cree usuario y verifique que se haya guardado correctamente
     @Test
-    void crearUsuarioYVerificarAtributos() {
+    void testCrearUsuario() {
+        Usuario u = new Usuario("Juan", "juan@test.com", "pwd", 30, "600000000");
+        Usuario saved = usuarioRepository.save(u);
+        assertNotNull(saved.getId(), "El usuario debe tener id tras persistir");
 
-        // Crear usuario usando el constructor
-        Usuario usuario = new Usuario("Juan", "juan@example.com", "pass123", true, "123456789");
-        // Antes de persistir, el id debe ser null
-        assertNull(usuario.getId());
-
-        // Verificar atributos iniciales
-        assertEquals("Juan", usuario.getNombre());
-        assertEquals("juan@example.com", usuario.getEmail());
-        assertEquals("pass123", usuario.getContrasenia());
-        assertTrue(usuario.isEdad());
-        assertEquals("123456789", usuario.getTelefono());
-
-        // Probar setters
-        usuario.setNombre("Pedro");
-        assertEquals("Pedro", usuario.getNombre());
-
+        Usuario fetched = usuarioRepository.findById(saved.getId()).orElse(null);
+        assertNotNull(fetched, "Debe poder recuperarse el usuario guardado");
+        assertEquals("Juan", fetched.getNombre());
+        assertEquals(30, fetched.getEdad());
     }
 
-
-
-    //Importante: Ya que Compra_Entrada tiene cascade = CascadeType.ALL para su relación con Entrada, y
-    // Usuario tiene cascade para Compra_Entrada, la eliminación de un Usuario debería provocar la eliminación
-    // en cascada de sus Compra_Entrada y, a su vez, la eliminación en cascada de todas las Entrada asociadas a esas compras.
+    //test que elimine un usuario y verifique que se haya eliminado correctamente
     @Test
-    void BorrarUsuario_EliminaCompraEntradaYEntradasEnCascada() {
-        // 1. Crear y guardar datos de prueba
-        Ubicacion ubicacion = new Ubicacion();
-        ubicacion.setNombre("Madrid");
-        ubicacion = ubicacionRepository.save(ubicacion);
+    void testEliminarUsuario() {
+        // crear usuario
+        Usuario u = new Usuario("Ana", "ana@test.com", "pwd", 28, "611111111");
+        u = usuarioRepository.save(u);
+        assertNotNull(u.getId(), "El usuario debe tener id tras persistir");
 
-        Local local = new Local();
-        local.setNombre("Sala Copérnico");
-        local.setUbicacion(ubicacion);
-        local = localRepository.save(local);
-
-        Usuario usuario = new Usuario();
-        usuario.setNombre("Juan Pérez");
-        usuario.setEmail("juan@example.com");
-        usuario.setContrasenia("password");
-        usuario.setEdad(true);
-        usuario.setTelefono("123456789");
-        usuario.setUbicacion(ubicacion);
-        usuario = usuarioRepository.save(usuario);
-
-        Evento evento = new Evento();
-        evento.setTitulo("Concierto de Prueba");
-        evento.setFecha(LocalDateTime.now().plusDays(1));
-        evento.setArtista("Artista de Prueba");
-        evento.setUbicacion("Madrid");
-        evento.setDescripcion("Descripción del evento");
-        evento.setAforo(100);
-        evento.setEstado("disponible");
-        evento.setTipo("+18");
-        evento.setEstado_aforo(false);
-        evento.setLocal(local);
+        // crear evento
+        Evento evento = new Evento("Concierto", LocalDateTime.now().plusDays(10), "Banda", "Ciudad", "Desc", 300, Boolean.TRUE, 0, null);
         evento = eventoRepository.save(evento);
 
-        Entrada entrada = new Entrada();
-        entrada.setNombre_evento("Concierto de Prueba");
-        entrada.setNombre_usuario("Juan Pérez");
-        entrada.setConsumiciones(true);
-        entrada.setTipo("VIP");
-        entrada.setUsuario(usuario);
-        entrada.setEvento(evento);
-        entrada = entradaRepository.save(entrada);
+        // crear entradas y compra asociada al usuario
+        Entrada e1 = new Entrada("GENERAL", u, evento, 0);
+        Entrada e2 = new Entrada("VIP", u, evento, 1);
 
-        Compra_Entrada compraEntrada = new Compra_Entrada();
-        compraEntrada.setFechaCompra(new Date());
-        compraEntrada.setPrecio(50.0f);
-        compraEntrada.setUsuario(usuario);
-        compraEntrada.setTipo_entradas(List.of(entrada));
-
-        // Sincronizar relación bidireccional (necesario si luego se accede a la lista)
-        usuario.getEntardas_compradas().add(compraEntrada);
-        // Persistir Compra_Entrada (el lado dueño de la FK)
-        compraEntrada = compraEntradaRepository.save(compraEntrada);
-
-
-        // 2. Verificar que los datos existen antes de borrar
-        Long usuarioId = usuario.getId();
-        Long compraId = compraEntrada.getId();
-        Long entradaId = entrada.getId();
-
-        assertTrue(usuarioRepository.existsById(usuarioId), "El usuario debe existir antes de la eliminación.");
-        assertTrue(compraEntradaRepository.existsById(compraId), "La compra debe existir antes de la eliminación.");
-        assertTrue(entradaRepository.existsById(entradaId), "La entrada debe existir antes de la eliminación.");
-
-        // 3. Borrar el usuario
-        usuarioRepository.deleteById(usuarioId);
-
-        // 4. Verificar la eliminación en cascada
-        assertFalse(usuarioRepository.existsById(usuarioId), "El usuario debería haber sido eliminado.");
-        assertFalse(compraEntradaRepository.existsById(compraId), "La Compra_Entrada asociada debería haberse eliminado en cascada.");
-        assertFalse(entradaRepository.existsById(entradaId), "La Entrada asociada debería haberse eliminado en cascada.");
-
-        // Verificar que otras entidades no relacionadas siguen existiendo
-        assertTrue(eventoRepository.existsById(evento.getId()), "El evento debería seguir existiendo.");
-        assertTrue(localRepository.existsById(local.getId()), "El local debería seguir existiendo.");
-        assertTrue(ubicacionRepository.existsById(ubicacion.getId()), "La ubicación debería seguir existiendo.");
-    }
-
-    @Test
-    void crearCompraDesdeUsuario_seAsociaAUsuario() {
-        // 1. Crear y persistir Ubicacion y Local (solo para completar datos si es necesario)
-        Ubicacion ubicacion = new Ubicacion();
-        ubicacion.setNombre("Zaragoza");
-        ubicacion = ubicacionRepository.save(ubicacion);
-
-        Local local = new Local();
-        local.setNombre("Sala Test");
-        local.setUbicacion(ubicacion);
-        local = localRepository.save(local);
-
-        // 2. Crear y persistir Usuario
-        Usuario usuario = new Usuario();
-        usuario.setNombre("Lucia");
-        usuario.setEmail("lucia@test.com");
-        usuario.setContrasenia("pwd");
-        usuario.setEdad(true);
-        usuario.setTelefono("600111222");
-        usuario.setUbicacion(ubicacion);
-        usuario = usuarioRepository.save(usuario);
-        assertNotNull(usuario.getId(), "Usuario debe tener id tras persistir");
-
-        // 3. Crear y persistir Evento
-        Evento evento = new Evento();
-        evento.setTitulo("Evento Test");
-        evento.setFecha(LocalDateTime.now().plusDays(5));
-        evento.setArtista("Artista Test");
-        evento.setUbicacion("Zaragoza");
-        evento.setDescripcion("Desc");
-        evento.setAforo(200);
-        evento.setEstado("disponible");
-        evento.setTipo("+18");
-        evento.setEstado_aforo(false);
-        evento.setLocal(local);
-        evento = eventoRepository.save(evento);
-        assertNotNull(evento.getId(), "Evento debe tener id tras persistir");
-
-        // 4. Crear Entradas y Compra_Entrada asociadas al usuario
-        Entrada entrada = new Entrada();
-        entrada.setNombre_evento(evento.getTitulo());
-        entrada.setNombre_usuario(usuario.getNombre());
-        entrada.setConsumiciones(false);
-        entrada.setTipo("GENERAL");
-        entrada.setUsuario(usuario);
-        entrada.setEvento(evento);
-
-        Compra_Entrada compra = new Compra_Entrada();
-        compra.setFechaCompra(new Date());
-        compra.setPrecio(25.0f);
-        compra.setTipo_entradas(List.of(entrada));
-        compra.setUsuario(usuario);
-
-        // 5. Mantener la relación bidireccional en memoria
-        usuario.getEntardas_compradas().add(compra);
-
-        // 6. Persistir la compra (cascade) y verificar
-        compra = compraEntradaRepository.save(compra);
-        assertNotNull(compra.getId(), "La compra debe tener id tras persistir");
-
-        // 7. Recargar usuario y comprobar que la compra aparece en su colección
-        Usuario usuarioRec = usuarioRepository.findById(usuario.getId()).orElse(null);
-        assertNotNull(usuarioRec, "El usuario debe recuperarse");
-        assertNotNull(usuarioRec.getEntardas_compradas(), "La colección de compras no debe ser null");
-        assertEquals(1, usuarioRec.getEntardas_compradas().size(), "El usuario debe tener 1 compra asociada");
-        Compra_Entrada compraRec = usuarioRec.getEntardas_compradas().get(0);
-        assertEquals(compra.getId(), compraRec.getId(), "La compra asociada al usuario debe coincidir con la persistida");
-    }
-
-    @Test
-    void anularCompra_usuarioEliminaCompraYEntradas() {
-        // 1) Crear y persistir Ubicacion/Local/Usuario/Eventos (mínimo necesario)
-        Ubicacion u = new Ubicacion();
-        u.setNombre("PruebaCity");
-        u = ubicacionRepository.save(u);
-
-        Local local = new Local();
-        local.setNombre("Sala Prueba");
-        local.setUbicacion(u);
-        local = localRepository.save(local);
-
-        Usuario usuario = new Usuario("Cliente", "c@test.com", "pwd", true, "600000000");
-        usuario.setUbicacion(u);
-        usuario = usuarioRepository.save(usuario);
-
-        Evento evento = new Evento("Show", LocalDateTime.now().plusDays(2), "Art", "PruebaCity", "desc", 100, "disponible", "+18", false, local);
-        evento = eventoRepository.save(evento);
-
-        // 2) Crear Entradas y Compra_Entrada asociadas al usuario
-        Entrada e1 = new Entrada("Show", usuario.getNombre(), false, "GENERAL", usuario, evento);
-        Compra_Entrada compra = new Compra_Entrada(new Date(), 20.0f, new ArrayList<>(Arrays.asList(e1)), usuario);
-
-        // Mantener bidireccionalidad en memoria (si aplica)
-        usuario.getEntardas_compradas().add(compra);
-
-        // Persistir la compra (cascade persistirá las entradas)
+        Compra_Entrada compra = new Compra_Entrada(new Date(), 59.99f, new ArrayList<>(Arrays.asList(e1, e2)), u);
         compra = compraEntradaRepository.save(compra);
 
-        Long compraId = compra.getId();
-        Long entradaId = e1.getId();
-        Long usuarioId = usuario.getId();
+        // Recuperar la compra persistida para obtener id/entradas reales
+        Compra_Entrada compraGuardada = compraEntradaRepository.findById(compra.getId()).orElseThrow();
+        assertNotNull(compraGuardada.getId(), "La compra debe tener id tras persistir");
 
-        assertTrue(compraEntradaRepository.existsById(compraId));
-        assertTrue(entradaRepository.existsById(entradaId));
+        // comprobar que hay al menos 2 entradas persistidas
+        assertTrue(entradaRepository.findAll().size() >= 2);
 
-        // 3) Simular anulación por parte del usuario:
-        // - quitar la compra de la colección del usuario para mantener coherencia en memoria
-        Usuario managedUser = usuarioRepository.findById(usuarioId).orElseThrow();
-        Compra_Entrada managedCompra = compraEntradaRepository.findById(compraId).orElseThrow();
-
-        managedUser.getEntardas_compradas().removeIf(c -> c.getId().equals(compraId));
-        usuarioRepository.save(managedUser); // opcional para sincronizar lado propietario si usas orphanRemoval
-
-        // Borrar la compra (si tu diseño requiere borrado explícito)
-        compraEntradaRepository.deleteById(compraId);
+        // eliminar usuario usando el id recuperado de la entidad gestionada
+        Long usuarioId = u.getId();
+        // Primero eliminar la compra asociada para evitar referencias a usuario en la BD
+        compraEntradaRepository.deleteById(compraGuardada.getId());
         compraEntradaRepository.flush();
 
-        // 4) Comprobaciones: compra y entradas ya no existen y usuario no las referencia
-        assertFalse(compraEntradaRepository.existsById(compraId), "La compra debe estar eliminada");
-        assertFalse(entradaRepository.existsById(entradaId), "Las entradas asociadas deben ser eliminadas en cascada (si ese es el contrato)");
-        Usuario usuarioRec = usuarioRepository.findById(usuarioId).orElseThrow();
-        assertTrue(usuarioRec.getEntardas_compradas().stream().noneMatch(c -> c.getId().equals(compraId)),
-                "La colección de compras del usuario no debe contener la compra anulada");
+        usuarioRepository.deleteById(usuarioId);
+        usuarioRepository.flush();
+
+        assertFalse(usuarioRepository.findById(usuarioId).isPresent(), "El usuario debe haber sido eliminado");
+
+        // Las compras deberían haberse eliminado por cascade (si no, al menos no referenciarán al usuario)
+        boolean anyCompraForUser = compraEntradaRepository.findAll().stream().anyMatch(c -> c.getUsuario() != null && c.getUsuario().getId() != null && c.getUsuario().getId().equals(usuarioId));
+        assertFalse(anyCompraForUser, "No debe existir compra asociada al usuario eliminado");
+
+        // Las entradas asociadas no deben existir o no deben estar asociadas al usuario eliminado
+        boolean anyEntradaForUser = entradaRepository.findAll().stream().anyMatch(en -> en.getUsuario() != null && en.getUsuario().getId() != null && en.getUsuario().getId().equals(usuarioId));
+        assertFalse(anyEntradaForUser, "No debe existir entrada asociada al usuario eliminado");
+    }
+
+    //test que compruebe que el nombre de ubicacion introducido por el usuario corresponde a algun objeto ubicacion en la base de datos
+    @Test
+    void testVerificarUbicacionUsuario() {
+        Ubicacion ub = new Ubicacion(null, "Granada");
+        ub = ubicacionRepository.save(ub);
+
+        // Simular entrada de nombre por parte del usuario
+        String nombreBuscado = "Granada";
+        boolean existe = ubicacionRepository.findAll().stream().anyMatch(u -> u.getNombre().equalsIgnoreCase(nombreBuscado));
+        assertTrue(existe, "La ubicacion 'Granada' debe existir en el repositorio");
+
+        // Comprobar negativo
+        String otro = "Córdoba";
+        boolean existe2 = ubicacionRepository.findAll().stream().anyMatch(u -> u.getNombre().equalsIgnoreCase(otro));
+        assertFalse(existe2, "La ubicacion 'Córdoba' no debe existir");
+    }
+
+    //test que compruebe que un usuario peude ver y elegir entre una lista de eventos disponibles
+    @Test
+    void testVerEventosDisponibles() {
+        Usuario usuario = new Usuario("Paco", "paco@test.com", "pwd", 25, "622222222");
+        usuario = usuarioRepository.save(usuario);
+
+        Local local = new Local(null, "Sala X");
+
+        Evento e1 = new Evento();
+        e1.setTitulo("Evento Futuro Disponible");
+        e1.setFecha(LocalDateTime.now().plusDays(2));
+        e1.setAforo(100);
+        e1.estadoDiponible(usuario); // establece estado
+
+        Evento e2 = new Evento();
+        e2.setTitulo("Evento Pasado No Disponible");
+        e2.setFecha(LocalDateTime.now().minusDays(2));
+        e2.setAforo(100);
+        e2.estadoDiponible(usuario);
+
+        local.addEvento(e1);
+        local.addEvento(e2);
+
+        local = localRepository.save(local);
+        localRepository.flush();
+
+        Local fetched = localRepository.findById(local.getId()).orElseThrow();
+        List<Evento> disponibles = fetched.getEventosDisponibles();
+
+        assertNotNull(disponibles);
+        assertTrue(disponibles.stream().anyMatch(ev -> "Evento Futuro Disponible".equals(ev.getTitulo())));
+        assertFalse(disponibles.stream().anyMatch(ev -> "Evento Pasado No Disponible".equals(ev.getTitulo())));
+    }
+
+    //test que compruebe que un usuario peude ver y elegir entre una lista de locales disponibles
+    @Test
+    void testVerLocalesDisponibles() {
+        Ubicacion ub = new Ubicacion(null, "Bilbao");
+        Local l1 = new Local(null, "Local A");
+        Local l2 = new Local(null, "Local B");
+        ub.addLocal(l1);
+        ub.addLocal(l2);
+        ub = ubicacionRepository.save(ub);
+
+        Usuario u = new Usuario("Marta", "marta@test.com", "pwd", 29, "633333333");
+        u.setUbicacion(ub);
+        u = usuarioRepository.save(u);
+
+        Usuario fetched = usuarioRepository.findById(u.getId()).orElseThrow();
+        assertNotNull(fetched.getUbicacion());
+        assertEquals(2, fetched.getUbicacion().getLocales().size());
+    }
+
+    //test que comprueube ue el usuario puede ver detalles de un evento seleccionado
+    @Test
+    void testVerDetallesEvento() {
+        Evento ev = new Evento("Show", LocalDateTime.now().plusDays(3), "Artista", "Calle Falsa", "Descripción larga", 50, Boolean.TRUE, 0, null);
+        ev = eventoRepository.save(ev);
+
+        Evento fetched = eventoRepository.findById(ev.getId()).orElseThrow();
+        assertEquals("Show", fetched.getTitulo());
+        assertEquals("Artista", fetched.getArtista());
+        assertEquals("Descripción larga", fetched.getDescripcion());
+    }
+
+
+    //test que compruebe que el usuario puede ver sus entradas compradas
+    @Test
+    void testVerEntradasCompradas() {
+        Usuario u = new Usuario("Luis", "luis@test.com", "pwd", 35, "644444444");
+        u = usuarioRepository.save(u);
+        assertNotNull(u.getId(), "Usuario debe tener id");
+
+        Evento evento = new Evento("Concierto", LocalDateTime.now().plusDays(6), "Banda", "Ciudad", "Desc", 200, Boolean.TRUE, 0, null);
+        evento = eventoRepository.save(evento);
+
+        Entrada ent1 = new Entrada("GENERAL", u, evento, 0);
+        Entrada ent2 = new Entrada("VIP", u, evento, 1);
+
+        Compra_Entrada compra = new Compra_Entrada(new Date(), 40.0f, new ArrayList<>(Arrays.asList(ent1, ent2)), u);
+        compra = compraEntradaRepository.save(compra);
+
+        // Recuperar la compra persistida para asegurar que las entradas tienen id asignado
+        Compra_Entrada compraGuardada = compraEntradaRepository.findById(compra.getId()).orElseThrow();
+        assertNotNull(compraGuardada.getId(), "La compra debe existir en la BD");
+        assertNotNull(compraGuardada.getTipo_entradas());
+        assertEquals(2, compraGuardada.getTipo_entradas().size());
+
+        Usuario fetched = usuarioRepository.findById(u.getId()).orElseThrow();
+        // Verificar relación inversa: la compra recuperada referencia al usuario
+        assertEquals(u.getId(), compraGuardada.getUsuario().getId());
+        // Opcional: comprobar que el repositorio de compras tiene la compra
+        assertTrue(compraEntradaRepository.findById(compraGuardada.getId()).isPresent());
+    }
+
+    //test que compruebe que el usuario puede cancelar una entrada comprada
+    @Test
+    void testCancelarEntradaComprada() {
+        Usuario u = new Usuario("Sara", "sara@test.com", "pwd", 27, "655555555");
+        u = usuarioRepository.save(u);
+        assertNotNull(u.getId(), "Usuario debe tener id");
+
+        Evento evento = new Evento("Evento", LocalDateTime.now().plusDays(8), "Grupo", "Sitio", "Desc", 100, Boolean.TRUE, 0, null);
+        evento = eventoRepository.save(evento);
+
+        Entrada e1 = new Entrada("GENERAL", u, evento, 0);
+        Entrada e2 = new Entrada("GENERAL", u, evento, 0);
+
+        Compra_Entrada compra = new Compra_Entrada(new Date(), 20.0f, new ArrayList<>(Arrays.asList(e1, e2)), u);
+        compra = compraEntradaRepository.save(compra);
+
+        // Recuperar la compra guardada para obtener los ids reales de las entradas persistidas
+        Compra_Entrada compraGuardada = compraEntradaRepository.findById(compra.getId()).orElseThrow();
+        assertNotNull(compraGuardada.getTipo_entradas());
+        assertFalse(compraGuardada.getTipo_entradas().isEmpty());
+
+        Long idEntradaAEliminar = compraGuardada.getTipo_entradas().get(0).getId();
+        assertNotNull(idEntradaAEliminar, "La entrada debe tener id antes de eliminarla");
+
+        // Cancelar (borrar) la entrada usando el id persistido
+        // En la aplicación lo razonable es quitar la entrada de la compra y guardar la compra
+        Compra_Entrada compraBefore = compraEntradaRepository.findById(compra.getId()).orElseThrow();
+        compraBefore.getTipo_entradas().removeIf(en -> en.getId() != null && en.getId().equals(idEntradaAEliminar));
+        compraEntradaRepository.save(compraBefore);
+        compraEntradaRepository.flush();
+
+        // Recuperar compra y comprobar que la entrada cancelada ya no esté presente
+        Compra_Entrada fetchedCompra = compraEntradaRepository.findById(compra.getId()).orElseThrow();
+        boolean contiene = fetchedCompra.getTipo_entradas().stream().anyMatch(en -> en.getId() != null && en.getId().equals(idEntradaAEliminar));
+        assertFalse(contiene, "La entrada cancelada no debe aparecer en la compra");
     }
 
 

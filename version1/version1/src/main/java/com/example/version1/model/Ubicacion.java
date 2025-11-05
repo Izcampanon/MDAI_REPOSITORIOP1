@@ -60,5 +60,15 @@ public class Ubicacion {
         l.setUbicacion(null);
     }
 
+    public void existe(Ubicacion ubicaicon){
+        if(this.nombre.equals(ubicaicon.getNombre())){
+            System.out.println("La ubicacion existe");
+        } else {
+            System.out.println("La ubicacion no existe");
+        }
+    }
+
+
+
 
 }
