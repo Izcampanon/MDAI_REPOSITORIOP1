@@ -2,17 +2,31 @@ package com.example.version1.clases;
 
 import com.example.version1.model.Evento;
 import com.example.version1.model.Local;
+import com.example.version1.repository.RepositoryEvento;
+import com.example.version1.repository.RepositoryLocal;
+import com.example.version1.repository.RepositoryUbicacion;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class EventoTest {
+@Transactional
+public class EventoTest {
 
+    @Autowired
+    private RepositoryEvento eventoRepository;
 
+    @Autowired
+    private RepositoryLocal localRepository;
+
+    @Autowired
+    private RepositoryUbicacion ubicacionRepository;
 
     @Test
     void crearEvento_sePersisteCorrectamente() {
@@ -106,6 +120,54 @@ class EventoTest {
         assertTrue(evento1Coincide, "El evento1 debe coincidir con la ubicación buscada");
         assertFalse(evento2Coincide, "El evento2 no debe coincidir con la ubicación buscada");
     }
+
+    @Test
+    void findByLocalId_returnsEvents() {
+        // Aislar
+        eventoRepository.deleteAll();
+        localRepository.deleteAll();
+        ubicacionRepository.deleteAll();
+
+        Local local = new Local(null, "SalaSQL");
+        Evento e1 = new Evento(); e1.setTitulo("E1"); e1.setFecha(LocalDateTime.now().plusDays(1)); e1.setAforo(100); e1.setEstado(Boolean.TRUE);
+        Evento e2 = new Evento(); e2.setTitulo("E2"); e2.setFecha(LocalDateTime.now().plusDays(2)); e2.setAforo(100); e2.setEstado(Boolean.TRUE);
+
+        local.addEvento(e1);
+        local.addEvento(e2);
+
+        local = localRepository.save(local);
+        localRepository.flush();
+
+        List<Evento> encontrados = eventoRepository.findByLocalId(local.getId());
+        assertNotNull(encontrados);
+        assertEquals(2, encontrados.size());
+        assertTrue(encontrados.stream().anyMatch(ev -> "E1".equals(ev.getTitulo())));
+        assertTrue(encontrados.stream().anyMatch(ev -> "E2".equals(ev.getTitulo())));
+    }
+
+    @Test
+    void findDisponiblesByLocalId_returnsOnlyAvailable() {
+        // Aislar
+        eventoRepository.deleteAll();
+        localRepository.deleteAll();
+
+        Local local = new Local(null, "SalaDisp");
+        Evento a1 = new Evento(); a1.setTitulo("A1"); a1.setFecha(LocalDateTime.now().plusDays(1)); a1.setAforo(100); a1.setEstado(Boolean.TRUE);
+        Evento a2 = new Evento(); a2.setTitulo("A2"); a2.setFecha(LocalDateTime.now().plusDays(1)); a2.setAforo(100); a2.setEstado(Boolean.FALSE);
+
+        local.addEvento(a1);
+        local.addEvento(a2);
+
+        local = localRepository.save(local);
+        localRepository.flush();
+
+        List<Evento> disponibles = eventoRepository.findDisponiblesByLocalId(local.getId());
+        assertNotNull(disponibles);
+        assertEquals(1, disponibles.size());
+        assertEquals("A1", disponibles.get(0).getTitulo());
+        assertTrue(Boolean.TRUE.equals(disponibles.get(0).getEstado()));
+    }
+
 
 
 }

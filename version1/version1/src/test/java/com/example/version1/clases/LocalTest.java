@@ -7,6 +7,7 @@ import com.example.version1.model.Evento;
 import com.example.version1.repository.RepositoryLocal;
 import com.example.version1.repository.RepositoryUbicacion;
 import com.example.version1.repository.RepositoryUsuario;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -198,6 +199,64 @@ public class LocalTest {
         });
     }
 
+    @Test
+    void findByIdWithEventos_obtieneEventos() {
+        // Aislar
+        localRepository.deleteAll();
+        ubicacionRepository.deleteAll();
 
+        Local local = new Local(null, "LocalEventos");
+        Evento e1 = new Evento();
+        e1.setTitulo("E1");
+        e1.setFecha(java.time.LocalDateTime.now().plusDays(1));
+        e1.setAforo(100);
+        e1.setEstado(Boolean.TRUE);
+        Evento e2 = new Evento();
+        e2.setTitulo("E2");
+        e2.setFecha(java.time.LocalDateTime.now().plusDays(2));
+        e2.setAforo(100);
+        e2.setEstado(Boolean.TRUE);
+
+        local.addEvento(e1);
+        local.addEvento(e2);
+
+        local = localRepository.save(local);
+        localRepository.flush();
+
+        Local fetched = localRepository.findByIdConEventos(local.getId());
+        assertNotNull(fetched);
+        assertNotNull(fetched.getEventos());
+        assertEquals(2, fetched.getEventos().size(), "Debe recuperar los 2 eventos asociados al local mediante fetch");
+    }
+
+    @Test
+    void findByNombreConEventosDisponibles_devolverDisponibles() {
+        // Aislar estado en BD
+        localRepository.deleteAll();
+        ubicacionRepository.deleteAll();
+
+        // Crear local con 3 eventos: A1 (true), A2 (false), A3 (true)
+        Local local = new Local(null, "AuditorioX");
+        Evento a1 = new Evento(); a1.setTitulo("A1"); a1.setFecha(java.time.LocalDateTime.now().plusDays(1)); a1.setAforo(100); a1.setEstado(Boolean.TRUE);
+        Evento a2 = new Evento(); a2.setTitulo("A2"); a2.setFecha(java.time.LocalDateTime.now().plusDays(1)); a2.setAforo(100); a2.setEstado(Boolean.FALSE);
+        Evento a3 = new Evento(); a3.setTitulo("A3"); a3.setFecha(java.time.LocalDateTime.now().plusDays(1)); a3.setAforo(100); a3.setEstado(Boolean.TRUE);
+
+        local.addEvento(a1);
+        local.addEvento(a2);
+        local.addEvento(a3);
+
+        // Persistir y forzar flush para que los ids se generen
+        localRepository.saveAndFlush(local);
+
+        // Ejecutar el método del repositorio que debe devolver el Local con solo eventos disponibles
+        var opt = localRepository.findByNombreConEventosDisponibles("auditoriox");
+        assertTrue(opt.isPresent(), "Debe recuperar el local cuando existen eventos disponibles");
+        Local fetched = opt.get();
+
+        // La colección fetch debería contener únicamente eventos con estado = true
+        assertNotNull(fetched.getEventos(), "La colección de eventos no debe ser null");
+        assertTrue(fetched.getEventos().stream().allMatch(ev -> Boolean.TRUE.equals(ev.getEstado())), "Todos los eventos deben tener estado true");
+        assertEquals(2, fetched.getEventos().size(), "Deben devolverse solo los 2 eventos disponibles");
+    }
 
 }

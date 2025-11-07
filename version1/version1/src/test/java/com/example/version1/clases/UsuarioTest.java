@@ -1,21 +1,33 @@
 // UsuarioTest.java
 package com.example.version1.clases;
 
-import com.example.version1.model.*;
-import com.example.version1.repository.*;
+import com.example.version1.model.Compra_Entrada;
+import com.example.version1.model.Entrada;
+import com.example.version1.model.Evento;
+import com.example.version1.model.Local;
+import com.example.version1.model.Ubicacion;
+import com.example.version1.model.Usuario;
+import com.example.version1.repository.RepositoryCompra_Entrada;
+import com.example.version1.repository.RepositoryEntrada;
+import com.example.version1.repository.RepositoryEvento;
+import com.example.version1.repository.RepositoryLocal;
+import com.example.version1.repository.RepositoryUbicacion;
+import com.example.version1.repository.RepositoryUsuario;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DataJpaTest
+@SpringBootTest
+@Transactional
 class UsuarioTest {
 
     @Autowired
@@ -61,11 +73,14 @@ class UsuarioTest {
         Evento evento = new Evento("Concierto", LocalDateTime.now().plusDays(10), "Banda", "Ciudad", "Desc", 300, Boolean.TRUE, 0, null);
         evento = eventoRepository.save(evento);
 
-        // crear entradas y compra asociada al usuario
+        // crear entradas y guardarlas antes de crear la compra (evita detached entity)
         Entrada e1 = new Entrada("GENERAL", u, evento, 0);
         Entrada e2 = new Entrada("VIP", u, evento, 1);
+        List<Entrada> entradasParaCompra = new ArrayList<>(Arrays.asList(e1, e2));
+        entradaRepository.saveAll(entradasParaCompra);
+        entradaRepository.flush();
 
-        Compra_Entrada compra = new Compra_Entrada(new Date(), 59.99f, new ArrayList<>(Arrays.asList(e1, e2)), u);
+        Compra_Entrada compra = new Compra_Entrada(new Date(), 59.99f, entradasParaCompra, u);
         compra = compraEntradaRepository.save(compra);
 
         // Recuperar la compra persistida para obtener id/entradas reales
@@ -77,7 +92,11 @@ class UsuarioTest {
 
         // eliminar usuario usando el id recuperado de la entidad gestionada
         Long usuarioId = u.getId();
-        // Primero eliminar la compra asociada para evitar referencias a usuario en la BD
+        // Primero eliminar las entradas asociadas y luego la compra para evitar restricciones FK
+        if (compraGuardada.getTipo_entradas() != null && !compraGuardada.getTipo_entradas().isEmpty()) {
+            entradaRepository.deleteAll(compraGuardada.getTipo_entradas());
+            entradaRepository.flush();
+        }
         compraEntradaRepository.deleteById(compraGuardada.getId());
         compraEntradaRepository.flush();
 
@@ -165,7 +184,7 @@ class UsuarioTest {
         assertEquals(2, fetched.getUbicacion().getLocales().size());
     }
 
-    //test que comprueube ue el usuario puede ver detalles de un evento seleccionado
+    //test que compruebe que el usuario puede ver detalles de un evento seleccionado
     @Test
     void testVerDetallesEvento() {
         Evento ev = new Evento("Show", LocalDateTime.now().plusDays(3), "Artista", "Calle Falsa", "Descripción larga", 50, Boolean.TRUE, 0, null);
@@ -190,8 +209,11 @@ class UsuarioTest {
 
         Entrada ent1 = new Entrada("GENERAL", u, evento, 0);
         Entrada ent2 = new Entrada("VIP", u, evento, 1);
+        List<Entrada> entradas = new ArrayList<>(Arrays.asList(ent1, ent2));
+        entradaRepository.saveAll(entradas);
+        entradaRepository.flush();
 
-        Compra_Entrada compra = new Compra_Entrada(new Date(), 40.0f, new ArrayList<>(Arrays.asList(ent1, ent2)), u);
+        Compra_Entrada compra = new Compra_Entrada(new Date(), 40.0f, entradas, u);
         compra = compraEntradaRepository.save(compra);
 
         // Recuperar la compra persistida para asegurar que las entradas tienen id asignado
@@ -219,8 +241,11 @@ class UsuarioTest {
 
         Entrada e1 = new Entrada("GENERAL", u, evento, 0);
         Entrada e2 = new Entrada("GENERAL", u, evento, 0);
+        List<Entrada> entradasCancelar = new ArrayList<>(Arrays.asList(e1, e2));
+        entradaRepository.saveAll(entradasCancelar);
+        entradaRepository.flush();
 
-        Compra_Entrada compra = new Compra_Entrada(new Date(), 20.0f, new ArrayList<>(Arrays.asList(e1, e2)), u);
+        Compra_Entrada compra = new Compra_Entrada(new Date(), 20.0f, entradasCancelar, u);
         compra = compraEntradaRepository.save(compra);
 
         // Recuperar la compra guardada para obtener los ids reales de las entradas persistidas
@@ -244,5 +269,116 @@ class UsuarioTest {
         assertFalse(contiene, "La entrada cancelada no debe aparecer en la compra");
     }
 
+    @Test
+    void findByEmailIgnoreCase_and_existsByEmail() {
+        // Asegurar borrado en orden: entradas y compras antes que usuarios (restricciones FK)
+        entradaRepository.deleteAll();
+        compraEntradaRepository.deleteAll();
+        usuarioRepository.deleteAll();
+
+        Usuario u = new Usuario();
+        u.setNombre("Pedro");
+        u.setEmail("Pedro@Email.com");
+        u.setContrasenia("x");
+        u.setEdad(30);
+        u = usuarioRepository.save(u);
+
+        // buscar por email en distinto case
+        var opt = usuarioRepository.findByEmailIgnoreCase("pedro@email.COM");
+        assertTrue(opt.isPresent());
+        assertEquals(u.getId(), opt.get().getId());
+
+        // existsByEmailNative
+        assertTrue(usuarioRepository.existsByEmail("PEDRO@email.com"));
+    }
+
+    @Test
+    void findByNombreIgnoreCase() {
+        entradaRepository.deleteAll();
+        compraEntradaRepository.deleteAll();
+        usuarioRepository.deleteAll();
+
+        Usuario u = new Usuario();
+        u.setNombre("Lucia");
+        u.setEmail("lucia@example.com");
+        u.setContrasenia("x");
+        u.setEdad(22);
+        u = usuarioRepository.save(u);
+
+        var opt = usuarioRepository.findByNombreIgnoreCase("lUciA");
+        assertTrue(opt.isPresent());
+        assertEquals("lucia@example.com", opt.get().getEmail());
+    }
+
+    @Test
+    void findByUbicacionId_returnsUsers() {
+        entradaRepository.deleteAll();
+        compraEntradaRepository.deleteAll();
+        usuarioRepository.deleteAll();
+        ubicacionRepository.deleteAll();
+
+        Ubicacion ub = new Ubicacion(null, "Sevilla");
+        Local loc = new Local(null, "SalaS");
+        ub.addLocal(loc);
+        ub = ubicacionRepository.save(ub);
+
+        Usuario u1 = new Usuario(); u1.setNombre("U1"); u1.setEmail("u1@example.com"); u1.setContrasenia("x"); u1.setEdad(25); u1.setUbicacion(ub); usuarioRepository.save(u1);
+        Usuario u2 = new Usuario(); u2.setNombre("U2"); u2.setEmail("u2@example.com"); u2.setContrasenia("x"); u2.setEdad(28); u2.setUbicacion(ub); usuarioRepository.save(u2);
+
+        usuarioRepository.flush();
+
+        List<Usuario> usuarios = usuarioRepository.findByUbicacionId(ub.getId());
+        assertNotNull(usuarios);
+        assertEquals(2, usuarios.size());
+    }
+
+    @Test
+    void findByEdadGreaterEqual_returnsAdults() {
+        entradaRepository.deleteAll();
+        compraEntradaRepository.deleteAll();
+        usuarioRepository.deleteAll();
+
+        Usuario menor = new Usuario(); menor.setNombre("Meno"); menor.setEmail("m@example.com"); menor.setContrasenia("x"); menor.setEdad(16); usuarioRepository.save(menor);
+        Usuario mayor = new Usuario(); mayor.setNombre("Mayor"); mayor.setEmail("M@example.com"); mayor.setContrasenia("x"); mayor.setEdad(21); usuarioRepository.save(mayor);
+
+        usuarioRepository.flush();
+
+        List<Usuario> adultos = usuarioRepository.findByEdadGreaterEqual(18);
+        assertNotNull(adultos);
+        assertTrue(adultos.stream().anyMatch(u -> u.getEdad() >= 18));
+        assertTrue(adultos.stream().anyMatch(u -> u.getNombre().equals("Mayor")));
+    }
+
+    @Test
+    void findComprasByUsuarioId_returnsPurchases() {
+         // Aislar
+         compraEntradaRepository.deleteAll();
+         entradaRepository.deleteAll();
+         usuarioRepository.deleteAll();
+         eventoRepository.deleteAll();
+         localRepository.deleteAll();
+
+        Usuario u = new Usuario(); u.setNombre("Comprador"); u.setEmail("comprador@example.com"); u.setContrasenia("x"); u.setEdad(30); u = usuarioRepository.save(u);
+
+        Local local = new Local(null, "SalaCompra");
+        Evento e = new Evento(); e.setTitulo("EvC"); e.setFecha(LocalDateTime.now().plusDays(2)); e.setAforo(100); e.setEstado(Boolean.TRUE);
+        local.addEvento(e);
+        local = localRepository.save(local);
+        eventoRepository.flush();
+
+        Entrada ent = new Entrada("GENERAL", u, e, 0);
+        // Guardar la entrada antes y usarla en la compra para evitar detached entity
+        entradaRepository.save(ent);
+        entradaRepository.flush();
+        List<Entrada> entradas = new ArrayList<>(); entradas.add(ent);
+        Compra_Entrada compra = new Compra_Entrada(new Date(), 25.0f, entradas, u);
+        compra = compraEntradaRepository.save(compra);
+        compraEntradaRepository.flush();
+
+        List<Compra_Entrada> compras = usuarioRepository.findComprasByUsuarioId(u.getId());
+        assertNotNull(compras);
+        assertEquals(1, compras.size());
+        assertEquals(u.getId(), compras.get(0).getUsuario().getId());
+    }
 
 }

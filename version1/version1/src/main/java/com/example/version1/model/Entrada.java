@@ -30,8 +30,9 @@ public class Entrada {
     public Entrada() {}
 
     public Entrada(String tipo, Usuario usuario, Evento evento, int cantidad_consumiciones) {
-        this.nombre_evento = evento.getTitulo();
-        this.nombre_usuario = usuario.getNombre();
+        // Evitar NullPointerException si se pasa usuario o evento nulo
+        this.nombre_evento = (evento != null) ? evento.getTitulo() : null;
+        this.nombre_usuario = (usuario != null) ? usuario.getNombre() : null;
         this.tipo = tipo;
         this.usuario = usuario;
         this.evento = evento;
