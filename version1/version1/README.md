@@ -16,7 +16,7 @@
 ---
 
 ### ESLOGAN
-La fiesta no espera, asegura tu entrada hoy
+La fiesta no espera, asegura tu entrada hoy HOLA IZAN 
 
 ---
 
