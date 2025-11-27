@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Mi Saldo</title>
+-    <link rel="stylesheet" th:href="@{/styles/mis_entradas.css}" />
++    <link rel="stylesheet" th:href="@{/styles/saldo.css}" />
+</head>
+<body>
+<div class="container">
+    <h1>Mi saldo</h1>
+
+    <div th:if="${error}" th:text="${error}" style="color:#b91c1c;padding:8px;background:#fee2e2;border-radius:6px;margin-bottom:12px;"></div>
+    <div th:if="${success}" th:text="${success}" style="color:#065f46;padding:8px;background:#ecfdf5;border-radius:6px;margin-bottom:12px;"></div>
+
+    <div class="card">
+        <p><strong>Usuario:</strong> <span th:text="${usuario.nombre}"></span></p>
+        <p><strong>Email:</strong> <span th:text="${usuario.email}"></span></p>
+        <p><strong>Saldo actual:</strong> <span th:text="${usuario.saldo}"></span> €</p>
+    </div>
+
+    <div style="margin-top:16px;">
+        <form th:action="@{/saldo/add}" method="post">
+            <label for="cantidad">Cantidad a añadir (€):</label>
+            <input type="text" id="cantidad" name="cantidad" th:value="${cantidad}" placeholder="Ej. 10 o 5.50" />
+            <button type="submit" class="btn">Añadir saldo</button>
+        </form>
+    </div>
+
+    <div style="margin-top:18px;">
+        <a th:href="@{/}" class="btn ghost">Volver al inicio</a>
+        <a th:href="@{/mis-entradas}" class="btn">Mis entradas</a>
+    </div>
+</div>
+</body>
+</html>
+

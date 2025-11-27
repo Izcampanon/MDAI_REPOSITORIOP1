@@ -1,11 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>Pagina de Bienvenida</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta charset="UTF-8" />
+    <title>Página de Bienvenida</title>
+    <link rel="stylesheet" th:href="@{/styles/index.css}" />
 </head>
+
 <body>
-<h1>¡Hola Mundo! </h1>
+<header class="site-header">
+    <div class="container header-inner">
+        <div class="brand">ENTRADAXPRESS</div>
+        <nav class="main-nav">
+            <a href="/" class="nav-link">Inicio</a>
+            <a href="/login" class="nav-link">Login</a>
+            <a href="/mis-entradas" class="nav-link">Mis entradas</a>
+            <a href="/saldo" class="nav-link">Saldo</a>
+            <a href="/comprar" class="nav-link cta">Comprar entrada</a>
+        </nav>
+    </div>
+</header>
+
+<main class="container main-content">
+    <section class="hero">
+        <h1>Bienvenido a EntradasApp</h1>
+        <p>Compra y gestiona tus entradas de forma fácil y rápida.</p>
+        <div class="hero-actions">
+            <a class="btn" href="/comprar">Comprar entrada</a>
+            <a class="btn ghost" href="/mis-entradas">Ver mis entradas</a>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="feature">
+            <h3>Acceso rápido</h3>
+            <p>Inicia sesión para ver tus compras y datos personales.</p>
+        </div>
+        <div class="feature">
+            <h3>Entradas disponibles</h3>
+            <p>Navega entre eventos y compra la entrada que más te guste.</p>
+        </div>
+        <div class="feature">
+            <h3>Gestión sencilla</h3>
+            <p>Consulta y descarga tus entradas desde tu perfil.</p>
+        </div>
+    </section>
+</main>
+
+<footer class="site-footer">
+    <div class="container">
+        <p>&copy; 2025 EntradasApp. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
 </body>
 </html>

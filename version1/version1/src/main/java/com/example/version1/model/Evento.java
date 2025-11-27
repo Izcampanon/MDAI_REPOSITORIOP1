@@ -21,6 +21,11 @@ public class Evento {
     private Boolean estado; //disponible (true) /no disponible(false)
     private int edadpermitida; //+18 -18
 
+    // Precios: precio por tipo y precio por consumición
+    private float precioGeneral = 50.0f;
+    private float precioVip = 80.0f;
+    private float precioConsumicion = 5.0f;
+
 
     // RELACIONES
     @OneToMany(mappedBy = "evento", cascade = CascadeType.ALL)
@@ -28,6 +33,10 @@ public class Evento {
 
     @ManyToOne
     private Local local;
+
+    // Campo transitorio para UI: plazas restantes calculadas en servicio
+    @Transient
+    private Integer plazasRestantes;
 
 
     // CONSTRUCTORES
@@ -134,6 +143,16 @@ public class Evento {
         return edadpermitida;
     }
 
+    // Precios getters/setters
+    public float getPrecioGeneral() { return precioGeneral; }
+    public void setPrecioGeneral(float precioGeneral) { this.precioGeneral = precioGeneral; }
+
+    public float getPrecioVip() { return precioVip; }
+    public void setPrecioVip(float precioVip) { this.precioVip = precioVip; }
+
+    public float getPrecioConsumicion() { return precioConsumicion; }
+    public void setPrecioConsumicion(float precioConsumicion) { this.precioConsumicion = precioConsumicion; }
+
     public boolean estadoDiponible(Usuario usuario) {
         boolean disponible = true;
 
@@ -170,9 +189,13 @@ public class Evento {
         return disponible;
     }
 
+    // Campo transitorio: plazas restantes
+    public Integer getPlazasRestantes() {
+        return plazasRestantes;
+    }
 
-
+    public void setPlazasRestantes(Integer plazasRestantes) {
+        this.plazasRestantes = plazasRestantes;
+    }
 
 }
-
-

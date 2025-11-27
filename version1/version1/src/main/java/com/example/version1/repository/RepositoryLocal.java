@@ -13,11 +13,11 @@ import java.util.Optional;
 @Repository
 public interface RepositoryLocal extends JpaRepository<Local, Long> {
 
-    // Buscar locales por nombre de ubicacion
-    @Query(value = "SELECT l.* FROM Local l JOIN Ubicacion u ON l.ubicacion_id = u.id WHERE lower(u.nombre) = lower(:nombreUbicacion)", nativeQuery = true)
+    // Buscar locales por nombre de ubicacion (case-insensitive, búsqueda parcial)
+    @Query(value = "SELECT l.* FROM Local l JOIN Ubicacion u ON l.ubicacion_id = u.id WHERE lower(u.nombre) LIKE lower(CONCAT('%', :nombreUbicacion, '%'))", nativeQuery = true)
     List<Local> findByNombreUbicacion(@Param("nombreUbicacion") String nombreUbicacion);
 
-    // Recuperar un Local por id
+    // Recuperar un Local por id (nativo)
     @Query(value = "SELECT * FROM Local l WHERE l.id = :id", nativeQuery = true)
     Optional<Local> findByIdNative(@Param("id") Long id);
 

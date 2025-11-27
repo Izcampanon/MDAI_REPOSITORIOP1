@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Detalle de la compra</title>
+    <link rel="stylesheet" th:href="@{/styles/mis_entradas.css}" />
+</head>
+<body>
+<div class="container">
+    <h1>Información de compra</h1>
+
+    <div th:if="${error}" th:text="${error}" class="error"></div>
+    <div th:if="${success}" th:text="${success}" class="success"></div>
+
+    <div th:if="${compra == null}">
+        <p>No se encontró la información de compra.</p>
+        <a th:href="@{/mis-entradas}" class="btn">Volver</a>
+    </div>
+
+    <div th:if="${compra != null}">
+        <h2>Datos de la compra</h2>
+        <p><strong>Fecha de compra:</strong> <span th:text="${#dates.format(compra.fechaCompra, 'dd/MM/yyyy HH:mm')}"></span></p>
+        <p><strong>Importe restante en la compra:</strong> <span th:text="${compra.precio}"></span> €</p>
+
+        <h3>Entradas en esta compra</h3>
+        <table class="entradas-table">
+            <thead>
+            <tr>
+                <th>Evento</th>
+                <th>Tipo</th>
+                <th>Consumiciones</th>
+                <th>Estado</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="e : ${compra.tipo_entradas}">
+                <td th:text="${e.nombre_evento}"></td>
+                <td th:text="${e.tipo}"></td>
+                <td th:text="${e.cantidad_consumiciones}"></td>
+                <td th:text="${e.devuelta ? 'Devuelta' : 'Activa'}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div style="margin-top:16px;">
+            <!-- Botón para devolver la entrada actual (la que abrió el detalle) -->
+            <form th:action="@{/entrada/{id}/devolver(id=${entrada.id})}" method="post">
+                <button type="submit" class="btn" th:if="${!entrada.devuelta}">Devolver esta entrada</button>
+                <span th:if="${entrada.devuelta}" style="color:#666;">Esta entrada ya ha sido devuelta.</span>
+            </form>
+        </div>
+
+        <div style="margin-top:16px;">
+            <a th:href="@{/mis-entradas}" class="btn ghost">Volver a Mis Entradas</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

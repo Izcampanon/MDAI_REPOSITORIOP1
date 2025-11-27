@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Usuarios registrados - Admin</title>
+    <link rel="stylesheet" th:href="@{/styles/admin.css}" />
+    <link rel="stylesheet" th:href="@{/styles/admin_users.css}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+<div class="admin-wrap users-wrap">
+    <header class="admin-header">
+        <h1>Usuarios registrados</h1>
+        <div class="admin-actions">
+            <a th:href="@{/admin}" class="btn ghost">Volver al panel</a>
+        </div>
+    </header>
+
+    <main class="admin-main">
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <section class="card">
+            <div class="table-responsive">
+                <table class="users-table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Edad</th>
+                        <th>Teléfono</th>
+                        <th>Admin</th>
+                        <th>Saldo</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="u : ${usuarios}">
+                        <td th:text="${u.id}"></td>
+                        <td th:text="${u.nombre}"></td>
+                        <td th:text="${u.email}"></td>
+                        <td th:text="${u.edad}"></td>
+                        <td th:text="${u.telefono}"></td>
+                        <td th:text="${u.admin ? 'Sí' : 'No'}"></td>
+                        <td th:text="${#numbers.formatDecimal(u.saldo, 1, 'COMMA', 2, 'POINT')}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="admin-footer">
+        <p>&copy; 2025 EntradasApp</p>
+    </footer>
+</div>
+</body>
+</html>
+

@@ -27,6 +27,9 @@ public class Compra_Entrada {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
+    public Compra_Entrada() {
+        // Constructor por defecto necesario para JPA
+    }
 
     public Compra_Entrada(Date fechaCompra, float precio, List<Entrada> tipo_entradas, Usuario usuario) {
         this.fechaCompra = fechaCompra;

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Crear Ubicación</title>
+    <link rel="stylesheet" th:href="@{/styles/ubicacion.css}" />
+</head>
+<body>
+<div class="wrap">
+    <div class="card">
+        <h2>Nueva Ubicación</h2>
+
+        <div th:if="${error}" th:text="${error}" class="error"></div>
+        <div th:if="${success}" th:text="${success}" class="success"></div>
+
+        <form th:action="@{/admin/ubicacion/new}" th:object="${ubicacion}" method="post">
+            <label for="nombre">Nombre de la ubicación</label>
+            <input type="text" id="nombre" th:field="*{nombre}" required />
+
+            <button type="submit">Crear ubicación</button>
+        </form>
+
+        <div class="note">Volver a <a th:href="@{/}">Inicio</a></div>
+    </div>
+</div>
+</body>
+</html>

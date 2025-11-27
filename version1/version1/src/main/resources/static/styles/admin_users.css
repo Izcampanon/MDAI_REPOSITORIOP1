@@ -1,0 +1,76 @@
+/* Estilos para admin_users.html */
+:root{
+  --bg:#f6f8fa;
+  --card:#ffffff;
+  --muted:#6b7280;
+  --accent:#2563eb;
+  --danger:#ef4444;
+  --border:#e5e7eb;
+}
+
+body{
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background:var(--bg);
+  color:#111827;
+  margin:0;
+}
+
+.admin-wrap.users-wrap{
+  max-width:1100px;
+  margin:28px auto;
+  padding:16px;
+}
+
+.admin-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:16px;
+}
+
+.admin-header h1{
+  margin:0;
+  font-size:1.4rem;
+}
+
+.admin-actions .btn{ text-decoration:none; padding:8px 12px; border-radius:6px; border:1px solid var(--border); background:transparent; color:var(--accent); }
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:12px;
+  box-shadow:0 1px 2px rgba(0,0,0,0.03);
+}
+
+.table-responsive{ overflow:auto; }
+
+.users-table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:700px;
+}
+
+.users-table thead tr{ background:#f3f4f6; }
+.users-table th, .users-table td{
+  text-align:left;
+  padding:10px 12px;
+  border-bottom:1px solid var(--border);
+  font-size:0.95rem;
+}
+
+.users-table tbody tr:hover{ background:#fbfdff; }
+
+.alert{ padding:10px 12px; border-radius:6px; margin-bottom:12px; }
+.alert-error{ background:#fff1f2; color:var(--danger); border:1px solid rgba(239,68,68,0.12); }
+.alert-success{ background:#ecfdf5; color:#065f46; border:1px solid rgba(16,185,129,0.12); }
+
+.admin-footer{ margin-top:16px; text-align:center; color:var(--muted); font-size:0.9rem; }
+
+@media (max-width:700px){
+  .admin-wrap.users-wrap{ padding:10px; }
+  .users-table{ min-width:600px; }
+  .admin-header h1{ font-size:1.1rem; }
+}
+

@@ -16,7 +16,7 @@
 ---
 
 ### ESLOGAN
-La fiesta no espera, asegura tu entrada hoy HOLA IZAN 
+La fiesta no espera, asegura tu entrada hoy 
 
 ---
 
@@ -39,11 +39,12 @@ La aplicación permite a los usuarios comprar entradas de manera rápida y segur
 * Usuario puede elegir evento de lista de eventos que pertenecen al local elegido.
 * Usuario puede ver detalles del evento (READ): título, fecha, artista, local y descripción.
 * Usuario puede comprar entradas para el evento (READ).
-* Usuario al comprar entrada introduce nombre/s de los asistente/s.
-* Usuario procesa pago (simulado).
+* Usuario al comprar entrada introduce nombre/s de los asistente/s. (ELIMINAR)
+* Usuario gestionara un saldo. Podra añadir saldo a su cuenta (UPDATE).
+* Usuario puede ver su saldo (READ).
 * Usuario obtiene entrada.
 * Usuario puede ver sus entradas compradas (READ).
-* Usuario puede cancelar una entrada (DELETE).
+* Usuario puede devolver una entrada (DELETE).
 * Cada vez que el usuario quiera realizar una compra deberá seleccionar la ubicación.
 
 ### Funcionalidades del Sistema
@@ -56,7 +57,8 @@ La aplicación permite a los usuarios comprar entradas de manera rápida y segur
 * El sistema lista locales por ubicación (READ).
 * El sistema lista eventos por local (READ).
 * El sistema comprueba que exista la ubicación introducida por el usuario.
-* El sistema comprueba si el usuario es mayor o menor de edad; si es menor, **todos los eventos aparecerán no disponibles.
+* El sistema retira el saldo al procesar la compra del usuario.
+* El sistema comprueba si el usuario es mayor o menor de edad; si es menor, todos los eventos aparecerán no disponibles.
 * Cuando el usuario compra la entrada se crea un registro de la compra (compra_entarda) que indica la fecha de compra, el usuario, el precio, el evento, y los nombres de los asistentes.
 
 ### Reglas de Estado del Evento y Entradas

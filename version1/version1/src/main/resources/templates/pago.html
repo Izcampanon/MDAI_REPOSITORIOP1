@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Pago</title>
+    <link rel="stylesheet" th:href="@{/styles/mis_entradas.css}" />
+</head>
+<body>
+<div class="container">
+    <h1>Pago de la entrada</h1>
+
+    <div th:if="${error}" th:text="${error}" style="color:#b91c1c;padding:8px;background:#fee2e2;border-radius:6px;margin-bottom:12px;"></div>
+
+    <div class="card">
+        <p><strong>Evento:</strong> <span th:text="${eventoSeleccionado.titulo}">Evento</span></p>
+        <p><strong>Tipo:</strong> <span th:text="${tipo}">GENERAL</span></p>
+        <p><strong>Consumiciones:</strong> <span th:text="${cantidadConsumiciones}">1</span></p>
+        <p><strong>Saldo disponible:</strong> <span th:text="${usuario.saldo}">0.0</span> €</p>
+        <p><small>Precio unitario: <span th:text="${precioUnitario}">0.0</span> €</small></p>
+        <p><small>Precio por consumición: <span th:text="${precioConsumicion}">0.0</span> € c/u</small></p>
+        <p><strong>Precio total: <span th:text="${precioTotal}">0.0</span> €</strong></p>
+    </div>
+
+    <form th:action="@{/compra/entrada/pagar}" method="post">
+        <input type="hidden" name="eventoId" th:value="${eventoSeleccionado.id}" />
+        <input type="hidden" name="tipo" th:value="${tipo}" />
+        <input type="hidden" name="cantidadConsumiciones" th:value="${cantidadConsumiciones}" />
+        <input type="hidden" name="nombreUbicacion" th:value="${nombreUbicacion}" />
+
+        <button type="submit" class="btn">Confirmar y pagar</button>
+        <a th:href="@{/compra}" class="btn ghost">Cancelar</a>
+    </form>
+
+</div>
+</body>
+</html>

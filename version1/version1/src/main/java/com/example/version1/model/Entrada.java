@@ -18,6 +18,9 @@ public class Entrada {
     private String tipo; // GENERAL, VIP
     private int cantidad_consumiciones;
 
+    // Indica si la entrada ha sido devuelta
+    private boolean devuelta = false;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Usuario usuario;
@@ -48,9 +51,16 @@ public class Entrada {
         return nombre_evento;
     }
 
+    // añadido: permitir establecer nombre_evento desde el servicio
+    public void setNombre_evento(String nombre_evento) {
+        this.nombre_evento = nombre_evento;
+    }
+
     public String getNombre_usuario() {
         return nombre_usuario;
     }
+
+    public void setNombre_usuario(String nombre_usuario) { this.nombre_usuario = nombre_usuario; }
 
     public String getTipo() {
         return tipo;
@@ -82,6 +92,8 @@ public class Entrada {
         this.cantidad_consumiciones = cantidad_consumiciones;
     }
 
+    public boolean isDevuelta() { return devuelta; }
+    public void setDevuelta(boolean devuelta) { this.devuelta = devuelta; }
 
 
 }

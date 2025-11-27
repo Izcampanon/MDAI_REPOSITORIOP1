@@ -19,6 +19,11 @@ public class Usuario {
     private int edad;
     private String telefono;
 
+    private boolean admin = false; // nuevo campo para roles
+
+    // Nuevo campo saldo para el usuario
+    private float saldo = 0.0f;
+
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Compra_Entrada> entardas_compradas = new ArrayList<>();
 
@@ -82,6 +87,14 @@ public class Usuario {
         this.telefono = telefono;
     }
 
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
+
     public List<Compra_Entrada> getEntardas_compradas() {
         return entardas_compradas;
     }
@@ -97,4 +110,14 @@ public class Usuario {
     public void setUbicacion(Ubicacion ubicacion) {
         this.ubicacion = ubicacion;
     }
+
+    // saldo getter/setter
+    public float getSaldo() {
+        return saldo;
+    }
+
+    public void setSaldo(float saldo) {
+        this.saldo = saldo;
+    }
+
 }

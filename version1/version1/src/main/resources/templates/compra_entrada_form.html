@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Buscar Local por Ubicación</title>
+    <link rel="stylesheet" th:href="@{/styles/compra_entrada.css}" />
+</head>
+<body>
+<div class="compra-wrap">
+    <header>
+        <h1>Comprar Entrada</h1>
+    </header>
+
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+    <div th:if="${info}" class="info" th:text="${info}"></div>
+
+    <main>
+        <section class="buscar">
+            <form th:action="@{/compra/ubicacion/search}" method="post">
+                <label for="nombreUbicacion">Nombre de la ubicación</label>
+                <input type="text" id="nombreUbicacion" name="nombreUbicacion" th:value="${nombreUbicacion}" placeholder="Ej. Centro" required />
+                <button type="submit">Buscar locales</button>
+            </form>
+        </section>
+
+        <section class="resultados" th:if="${locales != null}">
+            <h2 th:if="${locales.size() > 0}">Locales en "<span th:text="${nombreUbicacion}"></span>"</h2>
+            <ul th:if="${locales.size() > 0}">
+                <li th:each="l : ${locales}">
+                    <strong th:text="${l.nombre}"></strong>
+                    <span> — </span>
+                    <span th:text="${l.ubicacion != null ? l.ubicacion.nombre : ''}"></span>
+
+                    <!-- Enlace GET para ver eventos de este local: /compra/local/{id} -->
+                    <a th:href="@{/compra/local/{id}(id=${l.id}, nombreUbicacion=${nombreUbicacion})}" style="display:inline-block;margin-left:12px" class="btn">Ver eventos</a>
+                </li>
+            </ul>
+            <div th:if="${locales.size() == 0}">No hay locales para esta ubicación.</div>
+        </section>
+
+        <!-- Mostrar eventos del local seleccionado -->
+        <section class="eventos" th:if="${eventos != null}">
+            <h2 th:if="${localSeleccionado != null}">Eventos en <span th:text="${localSeleccionado.nombre}"></span></h2>
+            <ul th:if="${eventos.size() > 0}">
+                <li th:each="e : ${eventos}">
+                    <strong th:text="${e.titulo}"></strong>
+                    <div>
+                        <small th:text="${e.fecha != null ? #temporals.format(e.fecha, 'yyyy-MM-dd HH:mm') : ''}"></small>
+                        <span> — </span>
+                        <span th:text="${e.artista}"></span>
+                        <div th:text="${e.descripcion}"></div>
+                        <div>Aforo: <span th:text="${e.aforo}"></span></div>
+                        <div th:if="${e.plazasRestantes != null}">Plazas restantes: <strong th:text="${e.plazasRestantes}"></strong></div>
+                        <div th:if="${e.plazasRestantes == null}">Plazas restantes: —</div>
+                        <div th:if="${e.estado == true}">Disponible</div>
+                        <div th:if="${e.estado == false}">No disponible</div>
+                    </div>
+
+                    <!-- Formulario para seleccionar este evento y rellenar la entrada -->
+                    <form th:action="@{/compra/evento/select}" method="post" style="margin-top:8px">
+                        <input type="hidden" name="eventoId" th:value="${e.id}" />
+                        <input type="hidden" name="nombreUbicacion" th:value="${nombreUbicacion}" />
+
+                        <button type="submit" th:if="${usuario != null} and ${e.estado == true} and ((${e.plazasRestantes} == null) ? true : (${e.plazasRestantes} > 0))">Seleccionar este evento</button>
+
+                        <div th:if="${usuario == null}">Inicia sesión para seleccionar y comprar entradas.</div>
+                    </form>
+                </li>
+            </ul>
+            <div th:if="${eventos.size() == 0}">No hay eventos disponibles para este local.</div>
+        </section>
+
+    </main>
+
+    <footer>
+        <a th:href="@{/}">Volver</a>
+    </footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Nuevo Local</title>
+    <link rel="stylesheet" th:href="@{/styles/admin.css}" />
+</head>
+<body>
+<div class="admin-wrap">
+    <header class="admin-header">
+        <h1>Crear Local</h1>
+    </header>
+
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+    <div th:if="${success}" class="success" th:text="${success}"></div>
+
+    <main class="admin-main">
+        <div class="admin-card">
+            <form th:action="@{/admin/local/new}" th:object="${local}" method="post">
+                <label for="nombre">Nombre del local</label>
+                <input type="text" id="nombre" th:field="*{nombre}" required />
+
+                <label for="ubicacion">Ubicación</label>
+                <select id="ubicacion" name="ubicacionId">
+                    <!-- mostrar mensaje si no hay ubicaciones -->
+                    <option value="" th:if="${ubicaciones == null or #lists.isEmpty(ubicaciones)}">-- Sin ubicaciones --</option>
+                    <!-- placeholder cuando sí hay ubicaciones -->
+                    <option value="" th:if="${ubicaciones != null and !#lists.isEmpty(ubicaciones)}">-- Seleccione una ubicación --</option>
+                    <!-- opciones reales -->
+                    <option th:each="u : ${ubicaciones}"
+                            th:value="${u.id}"
+                            th:text="${u.nombre}"
+                            th:selected="${u.id == (selectedUbicacionId != null ? selectedUbicacionId : (local != null && local.ubicacion != null ? local.ubicacion.id : null))}">
+                    </option>
+                </select>
+
+                <button type="submit">Crear local</button>
+            </form>
+        </div>
+    </main>
+
+    <footer class="admin-footer">
+        <a th:href="@{/admin}">Volver al panel</a>
+    </footer>
+</div>
+</body>
+</html>

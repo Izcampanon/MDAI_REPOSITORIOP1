@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Mis Entradas</title>
+    <link rel="stylesheet" th:href="@{/styles/mis_entradas.css}" />
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <div class="brand">EntradasApp</div>
+        <nav class="main-nav">
+            <a href="/" class="nav-link">Inicio</a>
+            <a href="/login" class="nav-link">Login</a>
+            <a href="/mis-entradas" class="nav-link">Mis entradas</a>
+            <a href="/saldo" class="nav-link">Saldo</a>
+            <a href="/comprar" class="nav-link cta">Comprar entrada</a>
+        </nav>
+    </div>
+</header>
+
+<main class="container main-content">
+    <h1>Mis Entradas</h1>
+
+    <section>
+        <h2>Entradas disponibles</h2>
+        <div th:if="${entradasDisponibles == null || #lists.isEmpty(entradasDisponibles)}">
+            <p>No tienes entradas para eventos futuros.</p>
+        </div>
+        <div th:if="${entradasDisponibles != null && !#lists.isEmpty(entradasDisponibles)}">
+            <table class="entradas-table">
+                <thead>
+                <tr>
+                    <th>Evento</th>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Consumiciones</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="entrada : ${entradasDisponibles}">
+                    <td th:text="${entrada.nombre_evento != null && entrada.nombre_evento != '' ? entrada.nombre_evento : (entrada.evento != null ? entrada.evento.titulo : '—')}"></td>
+                    <td th:text="${entrada.evento != null ? #temporals.format(entrada.evento.fecha,'dd/MM/yyyy HH:mm') : '—'}"></td>
+                    <td th:text="${entrada.tipo}"></td>
+                    <td th:text="${entrada.cantidad_consumiciones}"></td>
+                    <td><a th:href="@{/entrada/{id}(id=${entrada.id})}">Ver</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section style="margin-top:24px;">
+        <h2>Entradas anteriores</h2>
+        <div th:if="${entradasAnteriores == null || #lists.isEmpty(entradasAnteriores)}">
+            <p>No tienes entradas de eventos pasados.</p>
+        </div>
+        <div th:if="${entradasAnteriores != null && !#lists.isEmpty(entradasAnteriores)}">
+            <table class="entradas-table">
+                <thead>
+                <tr>
+                    <th>Evento</th>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Consumiciones</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="entrada : ${entradasAnteriores}">
+                    <td th:text="${entrada.nombre_evento != null && entrada.nombre_evento != '' ? entrada.nombre_evento : (entrada.evento != null ? entrada.evento.titulo : '—')}"></td>
+                    <td th:text="${entrada.evento != null ? #temporals.format(entrada.evento.fecha,'dd/MM/yyyy HH:mm') : '—'}"></td>
+                    <td th:text="${entrada.tipo}"></td>
+                    <td th:text="${entrada.cantidad_consumiciones}"></td>
+                    <td><a th:href="@{/entrada/{id}(id=${entrada.id})}">Ver</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section style="margin-top:24px;">
+        <h2>Entradas no disponibles (devueltas)</h2>
+        <div th:if="${entradasDevueltas == null || #lists.isEmpty(entradasDevueltas)}">
+            <p>No tienes entradas devueltas.</p>
+        </div>
+        <div th:if="${entradasDevueltas != null && !#lists.isEmpty(entradasDevueltas)}">
+            <table class="entradas-table">
+                <thead>
+                <tr>
+                    <th>Evento</th>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Consumiciones</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="entrada : ${entradasDevueltas}">
+                    <td th:text="${entrada.nombre_evento != null && entrada.nombre_evento != '' ? entrada.nombre_evento : (entrada.evento != null ? entrada.evento.titulo : '—')}"></td>
+                    <td th:text="${entrada.evento != null ? #temporals.format(entrada.evento.fecha,'dd/MM/yyyy HH:mm') : '—'}"></td>
+                    <td th:text="${entrada.tipo}"></td>
+                    <td th:text="${entrada.cantidad_consumiciones}"></td>
+                    <td><a th:href="@{/entrada/{id}(id=${entrada.id})}">Ver</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <div class="actions" style="margin-top:20px;">
+        <a class="btn" href="/">Volver al inicio</a>
+        <a class="btn ghost" href="/comprar">Comprar más entradas</a>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <div class="container">
+        <p>&copy; 2025 EntradasApp</p>
+    </div>
+</footer>
+
+</body>
+</html>

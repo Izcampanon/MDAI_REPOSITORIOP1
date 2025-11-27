@@ -60,4 +60,8 @@ public interface RepositoryCompra_Entrada extends JpaRepository<Compra_Entrada, 
         return removedJoin + removedCompra;
     }
 
+    // Buscar la compra que contiene una entrada específica (join table)
+    @Query(value = "SELECT c.* FROM Compra_Entrada c JOIN compra_entrada_entardas ce ON c.id = ce.compra_entrada_id WHERE ce.entrada_id = :entradaId", nativeQuery = true)
+    Compra_Entrada findByEntradaId(@Param("entradaId") Long entradaId);
+
 }

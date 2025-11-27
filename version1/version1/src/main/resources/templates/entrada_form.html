@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Rellenar Entrada</title>
+    <link rel="stylesheet" th:href="@{/styles/entrada.css}" />
+</head>
+<body>
+<div class="entrada-wrap">
+    <header><h1>Datos de la entrada</h1></header>
+
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+
+    <main>
+        <div class="evento-resumen" th:if="${eventoSeleccionado != null}">
+            <h2 th:text="${eventoSeleccionado.titulo}"></h2>
+            <p><strong>Artista:</strong> <span th:text="${eventoSeleccionado.artista}"></span></p>
+            <p><strong>Fecha:</strong> <span th:text="${eventoSeleccionado.fecha != null ? #temporals.format(eventoSeleccionado.fecha, 'yyyy-MM-dd HH:mm') : ''}"></span></p>
+            <p><strong>Local:</strong> <span th:text="${eventoSeleccionado.local != null ? eventoSeleccionado.local.nombre : ''}"></span></p>
+        </div>
+
+        <form th:action="@{/compra/entrada/confirm}" method="post" class="entrada-form">
+            <input type="hidden" name="eventoId" th:value="${eventoSeleccionado != null ? eventoSeleccionado.id : ''}" />
+            <input type="hidden" name="nombreUbicacion" th:value="${nombreUbicacion}" />
+
+            <label for="tipo">Tipo de entrada</label>
+            <select id="tipo" name="tipo" th:value="${entradaTipo}">
+                <option value="GENERAL" th:selected="${entradaTipo == 'GENERAL'}">GENERAL</option>
+                <option value="VIP" th:selected="${entradaTipo == 'VIP'}">VIP</option>
+            </select>
+
+            <label for="cantidadConsumiciones">Cantidad de consumiciones</label>
+            <input type="number" id="cantidadConsumiciones" name="cantidadConsumiciones" min="1" th:value="${cantidadConsumiciones}" />
+
+            <div class="actions">
+                <button type="submit">Confirmar y continuar a pago</button>
+                <a th:href="@{/compra/ubicacion}" class="btn-link">Cancelar</a>
+            </div>
+        </form>
+    </main>
+
+    <footer><a th:href="@{/}">Volver</a></footer>
+</div>
+</body>
+</html>
+

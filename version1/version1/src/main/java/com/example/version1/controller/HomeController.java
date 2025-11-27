@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class HomeController {
 
@@ -28,6 +30,7 @@ public class HomeController {
         return "index";
     }
 
+    // iniciar sesion
     @GetMapping("/login")
     public String login(Model model) {
         model.addAttribute("usuario", new Usuario());
@@ -36,13 +39,17 @@ public class HomeController {
     }
 
     @PostMapping("/login")
-    public String loginPost(@ModelAttribute Usuario usuario, Model model) {
-        // Usar validarCredenciales: solo necesitamos email y contrasenia para el login
+    public String loginPost(@ModelAttribute Usuario usuario, Model model, HttpSession session) {
+        // Autenticar y guardar usuario en sesión
         String email = usuario.getEmail();
         String contrasenia = usuario.getContrasenia();
-        boolean valido = usuarioService.validarCredenciales(email, contrasenia);
-        if (valido) {
-            System.out.println("\t Usuario válido -> redirigir a /");
+        Usuario autenticado = usuarioService.autenticar(email, contrasenia);
+        if (autenticado != null) {
+            session.setAttribute("usuario", autenticado);
+            System.out.println("\t Usuario autenticado -> redirigir");
+            if (autenticado.isAdmin()) {
+                return "redirect:/admin";
+            }
             return "redirect:/";
         } else {
             model.addAttribute("error", "Usuario o contraseña inválidos");
@@ -51,6 +58,43 @@ public class HomeController {
         }
     }
 
+    // Registro
+    @GetMapping("/registro")
+    public String registroForm(Model model) {
+        model.addAttribute("usuario", new Usuario());
+        return "registro";
+    }
 
+    @PostMapping("/registro")
+    public String registroSubmit(@ModelAttribute Usuario usuario, Model model) {
+        // validar campos mínimos con el servicio
+        boolean valido = usuarioService.validarUsuario(usuario);
+        if (!valido) {
+            model.addAttribute("error", "Datos inválidos o incompletos. Revise los campos.");
+            model.addAttribute("usuario", usuario);
+            return "registro";
+        }
+
+        try {
+            usuarioService.crearUsuario(usuario);
+            model.addAttribute("success", "Registro correcto. Ya puedes iniciar sesión.");
+            return "login"; // redirigir al login mostrando mensaje
+        } catch (Exception e) {
+            model.addAttribute("error", "Error al crear el usuario: " + e.getMessage());
+            model.addAttribute("usuario", usuario);
+            return "registro";
+        }
+    }
+
+    // Nuevo: ruta para iniciar flujo de compra (redirige al formulario de búsqueda de ubicación)
+    @GetMapping("/comprar")
+    public String comprar(HttpSession session, Model model) {
+        Usuario u = (Usuario) session.getAttribute("usuario");
+        if (u == null) {
+            model.addAttribute("error", "Debes iniciar sesión para comprar entradas.");
+            return "login";
+        }
+        return "redirect:/compra/ubicacion";
+    }
 
 }
