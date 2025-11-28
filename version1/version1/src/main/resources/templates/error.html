@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Error</title>
+    <style>
+        body{font-family: Arial, Helvetica, sans-serif;background:#f8fafc;color:#111827;padding:24px}
+        .card{max-width:800px;margin:40px auto;padding:18px;border-radius:8px;background:#fff;border:1px solid #e5e7eb}
+        h1{color:#b91c1c}
+        .meta{color:#374151;margin-top:8px}
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Se ha producido un error</h1>
+    <p th:if="${error}"><strong>Detalles:</strong> <span th:text="${error}">Error interno</span></p>
+    <p th:if="${message}"><strong>Mensaje:</strong> <span th:text="${message}"></span></p>
+    <p class="meta">Necesitas estar logeado para acceder a comprar entradas.</p>
+    <p><a th:href="@{/}">Volver al inicio</a></p>
+</div>
+</body>
+</html>
+

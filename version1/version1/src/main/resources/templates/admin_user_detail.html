@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Detalle usuario - Admin</title>
+    <link rel="stylesheet" th:href="@{/styles/admin.css}" />
+    <link rel="stylesheet" th:href="@{/styles/admin_user_detail.css}" />
+</head>
+<body>
+<div class="admin-wrap">
+    <header class="admin-header">
+        <h1>Detalle de usuario</h1>
+        <div class="admin-actions">
+            <a th:href="@{/admin/users}" class="btn ghost">Volver a lista</a>
+            <a th:href="@{/admin/user/{id}/edit(id=${usuarioDetalle.id})}" class="btn">Editar</a>
+        </div>
+    </header>
+
+    <main class="admin-main">
+        <section class="card">
+            <h2>Datos</h2>
+            <p><strong>ID:</strong> <span th:text="${usuarioDetalle.id}"></span></p>
+            <p><strong>Nombre:</strong> <span th:text="${usuarioDetalle.nombre}"></span></p>
+            <p><strong>Email:</strong> <span th:text="${usuarioDetalle.email}"></span></p>
+            <p><strong>Edad:</strong> <span th:text="${usuarioDetalle.edad}"></span></p>
+            <p><strong>Teléfono:</strong> <span th:text="${usuarioDetalle.telefono}"></span></p>
+            <p><strong>Admin:</strong> <span th:text="${usuarioDetalle.admin ? 'Sí' : 'No'}"></span></p>
+            <p><strong>Saldo:</strong> <span th:text="${#numbers.formatDecimal(usuarioDetalle.saldo, 1, 'COMMA', 2, 'POINT')}"></span> €</p>
+        </section>
+
+        <section class="card" th:if="${compras != null}">
+            <h2>Compras asociadas (<span th:text="${compras.size()}"></span>)</h2>
+            <div th:if="${compras.size() == 0}">No tiene compras registradas.</div>
+            <ul th:each="c : ${compras}">
+                <li>
+                    <div>
+                        <strong>Compra ID:</strong> <span th:text="${c.id}"></span>
+                        <span> - Fecha: </span><span th:text="${c.fechaCompra}"></span>
+                        <span> - Precio: </span><span th:text="${c.precio}"></span> €
+                    </div>
+                    <div>
+                        <strong>Entradas:</strong>
+                        <ul>
+                            <li th:each="e : ${c.tipo_entradas}">
+                                <span th:text="${e.tipo}"></span> - <span th:text="${e.nombre_evento}"></span>
+                                (<span th:text="${e.cantidad_consumiciones}"></span> consumiciones)
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+    </main>
+
+    <footer class="admin-footer">
+        <p>&copy; 2025 EntradasApp</p>
+    </footer>
+</div>
+</body>
+</html>

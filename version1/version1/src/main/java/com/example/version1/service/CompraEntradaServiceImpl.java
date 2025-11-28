@@ -117,6 +117,7 @@ public class CompraEntradaServiceImpl implements CompraEntradaService {
         }
         // cantidad
         if (cantidadConsumiciones <= 0) return Optional.of("La cantidad de consumiciones debe ser mayor que 0");
+        if(cantidadConsumiciones >20) return Optional.of("La cantidad de consumiciones no puede ser mayor que 10");
         // aforo (contamos entradas ya registradas)
         long ocupadas = repositoryEntrada.countByEventoId(evento.getId());
         if (evento.getAforo() >= 0 && ocupadas >= evento.getAforo()) return Optional.of("El evento está lleno");
@@ -188,5 +189,76 @@ public class CompraEntradaServiceImpl implements CompraEntradaService {
         usuario.setSaldo(usuario.getSaldo() - precioTotal);
         repositoryUsuario.save(usuario);
     }
+
+    // java
+    @Transactional
+    public Optional<String> devolverCompra(Long compraId, Usuario usuario) {
+        if (compraId == null) return Optional.of("Id de compra requerido");
+        if (usuario == null) return Optional.of("Usuario no autenticado");
+
+        Optional<Compra_Entrada> optCompra = repositoryCompraEntrada.findById(compraId);
+        if (optCompra.isEmpty()) return Optional.of("Compra no encontrada");
+        Compra_Entrada compra = optCompra.get();
+
+        // Verificar propiedad
+        try {
+            Usuario propietario = compra.getUsuario();
+            if (propietario == null || propietario.getId() == null || !propietario.getId().equals(usuario.getId())) {
+                return Optional.of("No autorizado para devolver esta compra");
+            }
+        } catch (Exception e) {
+            return Optional.of("No se pudo verificar la propiedad de la compra");
+        }
+
+        // Comprobar si ya fue devuelta (intentar varios getters)
+        try {
+            Boolean yaDevuelta = null;
+            try {
+                yaDevuelta = (Boolean) compra.getClass().getMethod("isDevuelta").invoke(compra);
+            } catch (NoSuchMethodException ex1) {
+                try { yaDevuelta = (Boolean) compra.getClass().getMethod("getDevuelta").invoke(compra); } catch (Exception ex2) { }
+            }
+            if (Boolean.TRUE.equals(yaDevuelta)) return Optional.of("La compra ya fue devuelta");
+        } catch (Exception ignore) { }
+
+        // Obtener importe pagado (intenta varios getters comunes)
+        float monto = 0f;
+        try {
+            String[] posibles = new String[] { "getPrecio", "getPrecioTotal", "getPrecio_total", "getImporte", "getAmount" };
+            for (String mname : posibles) {
+                try {
+                    Object val = compra.getClass().getMethod(mname).invoke(compra);
+                    if (val instanceof Number) { monto = ((Number) val).floatValue(); break; }
+                } catch (NoSuchMethodException ignored) { }
+            }
+        } catch (Exception e) {
+            return Optional.of("No se pudo determinar el importe de la compra");
+        }
+
+        if (monto <= 0f) return Optional.of("Importe de la compra no válido para devolución");
+
+        // Realizar devolución: recargar saldo y marcar compra como devuelta
+        try {
+            usuario.setSaldo(usuario.getSaldo() + monto);
+            repositoryUsuario.save(usuario);
+
+            // Marcar la compra como devuelta si existe setter
+            try {
+                try {
+                    compra.getClass().getMethod("setDevuelta", boolean.class).invoke(compra, true);
+                } catch (NoSuchMethodException ex1) {
+                    try { compra.getClass().getMethod("setDevuelto", boolean.class).invoke(compra, true); } catch (NoSuchMethodException ex2) { }
+                }
+            } catch (Exception ignore) { }
+
+            repositoryCompraEntrada.save(compra); // persistir cambio de estado si aplica
+
+            System.out.println("[CompraEntradaService] Devolución realizada. Usuario: " + usuario.getEmail() + " - Monto: " + monto);
+            return Optional.empty();
+        } catch (Exception e) {
+            return Optional.of("Error al procesar la devolución: " + e.getMessage());
+        }
+    }
+
 
 }

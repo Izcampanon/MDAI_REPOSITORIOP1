@@ -32,6 +32,7 @@
                         <th>Teléfono</th>
                         <th>Admin</th>
                         <th>Saldo</th>
+                        <th>Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -43,6 +44,13 @@
                         <td th:text="${u.telefono}"></td>
                         <td th:text="${u.admin ? 'Sí' : 'No'}"></td>
                         <td th:text="${#numbers.formatDecimal(u.saldo, 1, 'COMMA', 2, 'POINT')}"></td>
+                        <td>
+                            <a th:href="@{/admin/user/{id}(id=${u.id})}" class="btn">Ver</a>
+                            <a th:href="@{/admin/user/{id}/edit(id=${u.id})}" class="btn">Editar</a>
+                            <form th:action="@{/admin/user/{id}/delete(id=${u.id})}" method="post" style="display:inline-block;margin:0;padding:0;">
+                                <button type="submit" class="btn danger" onclick="return confirm('¿Eliminar usuario? Esta acción no se puede deshacer.')">Eliminar</button>
+                            </form>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -57,4 +65,3 @@
 </div>
 </body>
 </html>
-

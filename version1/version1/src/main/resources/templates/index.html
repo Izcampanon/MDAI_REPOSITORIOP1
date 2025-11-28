@@ -28,6 +28,8 @@
         <div class="hero-actions">
             <a class="btn" href="/comprar">Comprar entrada</a>
             <a class="btn ghost" href="/mis-entradas">Ver mis entradas</a>
+            <!-- Nuevo botón para recomendaciones -->
+            <button id="btnRecomendar" class="btn" type="button">Recomendaciones</button>
         </div>
     </section>
 
@@ -45,6 +47,19 @@
             <p>Consulta y descarga tus entradas desde tu perfil.</p>
         </div>
     </section>
+
+    <!-- Panel de recomendaciones / chat -->
+    <section id="recomendacionPanel" class="reco-panel" style="display:none; margin-top:20px;">
+        <h2>Recomendaciones</h2>
+        <div>
+            <label for="prefs">Dime tus preferencias (género, artista, palabra clave):</label>
+            <input id="prefs" type="text" placeholder="Ej. rock, pop, jazz..." style="width:60%; padding:6px" />
+            <button id="sendPrefs" class="btn" type="button">Pedir recomendaciones</button>
+            <button id="closeReco" class="btn ghost" type="button">Cerrar</button>
+        </div>
+        <div id="recoResult" style="white-space:pre-wrap; margin-top:12px; padding:12px; border:1px solid #e5e7eb; background:#fff;"></div>
+    </section>
+
 </main>
 
 <footer class="site-footer">
@@ -52,6 +67,40 @@
         <p>&copy; 2025 EntradasApp. Todos los derechos reservados.</p>
     </div>
 </footer>
+
+<script>
+    // Manejo básico del panel y llamada AJAX (fetch)
+    document.getElementById('btnRecomendar').addEventListener('click', function() {
+        document.getElementById('recomendacionPanel').style.display = 'block';
+        document.getElementById('recoResult').textContent = 'Cargando...';
+    });
+
+    document.getElementById('closeReco').addEventListener('click', function() {
+        document.getElementById('recomendacionPanel').style.display = 'none';
+    });
+
+    document.getElementById('sendPrefs').addEventListener('click', function() {
+        const prefs = document.getElementById('prefs').value || '';
+        const resultDiv = document.getElementById('recoResult');
+        resultDiv.textContent = 'Solicitando recomendaciones...';
+
+        fetch('/recomendaciones', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ preferencias: prefs })
+        })
+        .then(resp => {
+            if (!resp.ok) throw new Error('Error en la petición: ' + resp.status);
+            return resp.json();
+        })
+        .then(data => {
+            resultDiv.textContent = data.recomendaciones || 'No hay recomendaciones.';
+        })
+        .catch(err => {
+            resultDiv.textContent = 'Se produjo un error al obtener las recomendaciones: ' + err.message;
+        });
+    });
+</script>
 
 </body>
 </html>

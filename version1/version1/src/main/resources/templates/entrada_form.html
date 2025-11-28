@@ -9,7 +9,10 @@
 <div class="entrada-wrap">
     <header><h1>Datos de la entrada</h1></header>
 
+    <!-- Mensajes flash -->
     <div th:if="${error}" class="error" th:text="${error}"></div>
+    <div th:if="${info}" class="info" th:text="${info}"></div>
+    <div th:if="${success}" class="success" th:text="${success}"></div>
 
     <main>
         <div class="evento-resumen" th:if="${eventoSeleccionado != null}">
@@ -30,7 +33,7 @@
             </select>
 
             <label for="cantidadConsumiciones">Cantidad de consumiciones</label>
-            <input type="number" id="cantidadConsumiciones" name="cantidadConsumiciones" min="1" th:value="${cantidadConsumiciones}" />
+            <input type="number" id="cantidadConsumiciones" name="cantidadConsumiciones" min="1" max="20" th:value="${cantidadConsumiciones}" />
 
             <div class="actions">
                 <button type="submit">Confirmar y continuar a pago</button>
@@ -43,4 +46,3 @@
 </div>
 </body>
 </html>
-

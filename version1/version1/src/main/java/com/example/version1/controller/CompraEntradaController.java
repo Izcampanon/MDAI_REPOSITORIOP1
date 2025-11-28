@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -98,11 +97,10 @@ public class CompraEntradaController {
     @PostMapping("/compra/evento/select")
     public String seleccionarEvento(@RequestParam("eventoId") Long eventoId,
                                     @RequestParam(value = "nombreUbicacion", required = false) String nombreUbicacion,
-                                    Model model, HttpSession session) {
+                                    Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         if (!estaLogeado(session)) {
-            model.addAttribute("error", "Debes iniciar sesión para comprar entradas.");
-            model.addAttribute("usuario", new Usuario());
-            return "login";
+            redirectAttributes.addFlashAttribute("error", "Debes iniciar sesión para comprar entradas.");
+            return "redirect:/login";
         }
         var evento = compraEntradaService.obtenerEvento(eventoId);
         if (evento == null) {
@@ -158,10 +156,16 @@ public class CompraEntradaController {
                               @RequestParam(value = "cantidadConsumiciones", required = false, defaultValue = "1") int cantidadConsumiciones,
                               @RequestParam(value = "nombreUbicacion", required = false) String nombreUbicacion,
                               Model model,
-                              HttpSession session) {
+                              HttpSession session,
+                              RedirectAttributes redirectAttributes) {
+
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        if (usuario == null) {
+            redirectAttributes.addFlashAttribute("error", "Debes iniciar sesión para comprar entradas.");
+            return "redirect:/login";
+        }
 
         Evento evento = compraEntradaService.obtenerEvento(eventoId);
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
 
         if (evento == null) {
             model.addAttribute("error", "Evento no encontrado.");

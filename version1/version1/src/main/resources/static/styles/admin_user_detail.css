@@ -1,0 +1,19 @@
+/* Estilos específicos para admin_user_detail.html */
+.admin-wrap { max-width: 1000px; margin: 24px auto; padding: 0 16px; }
+.admin-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.admin-header h1 { margin:0; font-size:1.4rem; }
+.admin-actions .btn { margin-left:8px; }
+.card { background:#fff; border:1px solid #e5e7eb; border-radius:8px; padding:16px; margin-bottom:12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.card h2 { margin-top:0; }
+.card p { margin:6px 0; }
+.card ul { margin:8px 0 0 18px; padding:0; }
+.card li { margin:6px 0; }
+.admin-footer { text-align:center; color:#6b7280; margin-top:18px; }
+.btn { display:inline-block; padding:6px 10px; border-radius:6px; background:#2563eb; color:#fff; text-decoration:none; border:none; cursor:pointer; }
+.btn.ghost { background:transparent; color:#2563eb; border:1px solid #c7d2fe; }
+.btn.danger { background:#ef4444; }
+@media (max-width:600px) {
+  .admin-wrap { padding:0 10px; }
+  .admin-header { flex-direction:column; align-items:flex-start; gap:8px; }
+}
+
