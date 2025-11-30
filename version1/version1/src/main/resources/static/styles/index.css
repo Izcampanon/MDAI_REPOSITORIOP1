@@ -1,46 +1,415 @@
-/* Estilos para index.html */
-:root{
-  --bg:#f4f6fb;
-  --accent:#2b6ef6;
-  --accent-dark:#2357d6;
-  --muted:#6b7280;
-  --card:#ffffff;
-}
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:var(--bg); color:#111827}
-.container{max-width:1100px;margin:0 auto;padding:0 18px}
-.site-header{background:linear-gradient(90deg, rgba(255,255,255,0.85), rgba(255,255,255,0.95));backdrop-filter: blur(6px);border-bottom:1px solid rgba(15,23,42,0.04)}
-.header-inner{display:flex;align-items:center;justify-content:space-between;padding:16px 0}
-.brand{font-weight:700;color:var(--accent);font-size:20px}
-.main-nav{display:flex;gap:12px;align-items:center}
-.nav-link{color:var(--muted);text-decoration:none;padding:8px 12px;border-radius:8px;font-weight:600}
-.nav-link:hover{background:rgba(43,110,246,0.06);color:var(--accent-dark)}
-.nav-link.cta{background:var(--accent);color:#fff}
-.nav-link.cta:hover{background:var(--accent-dark)}
+/* Estilos para index.html basados en la imagen de destino y paleta B/N/A */
 
-.main-content{padding:36px 0}
-.hero{background:linear-gradient(180deg,#fff, #fbfdff);padding:36px;border-radius:12px;box-shadow:0 8px 24px rgba(15,23,42,0.06);display:flex;flex-direction:column;align-items:flex-start;gap:12px}
-.hero h1{margin:0;font-size:28px}
-.hero p{margin:0;color:var(--muted)}
-.hero-actions{margin-top:10px;display:flex;gap:12px}
-.btn{display:inline-block;padding:10px 14px;border-radius:10px;text-decoration:none;background:var(--accent);color:#fff;font-weight:700}
-.btn.ghost{background:transparent;border:1px solid rgba(15,23,42,0.06);color:var(--muted);font-weight:600}
+/* Importamos Poppins desde Google Fonts (incluye SemiBold/600) */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&display=swap');
 
-.features{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
-.feature{background:var(--card);padding:18px;border-radius:10px;box-shadow:0 6px 18px rgba(15,23,42,0.04);border:1px solid rgba(15,23,42,0.03)}
-.feature h3{margin:0 0 8px 0}
-.feature p{margin:0;color:var(--muted)}
-
-.site-footer{padding:18px 0;margin-top:20px;color:var(--muted);text-align:center}
-
-@media (max-width:880px){
-  .features{grid-template-columns:repeat(2,1fr)}
-}
-@media (max-width:600px){
-  .header-inner{padding:12px 0}
-  .main-nav{display:none}
-  .hero{padding:20px}
-  .features{grid-template-columns:1fr}
-  .hero h1{font-size:22px}
+/* Si tienes el archivo Avenir-Light.woff2, colócalo en:
+   src/main/resources/static/fonts/Avenir-Light.woff2
+   y se usará como Avenir Light. Si no lo tienes, se usará la pila de fuentes de fallback. */
+@font-face {
+  font-family: 'Avenir Light';
+  src: url('/fonts/Avenir-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
 }
 
+:root {
+  /* Paleta de colores: Blanco, Negro, Amarillo */
+  --bg-dark: #1a1a1a;
+  --accent-yellow: #ffee58; /* Amarillo brillante del logo y botón */
+  --accent-yellow-dark: #fdd835; /* Amarillo más oscuro para hover */
+  --text-light: #ffffff; /* Texto claro (Blanco) */
+  --text-dark: #000000; /* Texto oscuro (Negro) */
+  --header-bg: rgba(0, 0, 0, 0.85); /* Fondo de cabecera semi-transparente oscuro */
+  --overlay-color: rgba(0, 0, 0, 0.6); /* Overlay más oscuro para legibilidad */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  /* Título principal usará Poppins SemiBold (600); menú usará Avenir Light si está disponible */
+  font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
+
+  /* Usamos la imagen local que está en src/main/resources/static/imagenes/ImagenFondo.jpeg
+     Al servirse como recurso estático desde Spring Boot, la ruta pública es /imagenes/ImagenFondo.jpeg */
+  background-image: url('https://modofestival.es/wp-content/uploads/2025/04/fantastic-festival-castellon-2025-1.jpg');
+  background-size: cover;
+  background-position: center bottom;
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+
+/* 1. Cabecera (Header) */
+.site-header {
+  background: var(--header-bg);
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 25px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Estilo del logo (inspirado en el recuadro amarillo) */
+.brand {
+  font-weight: 900;
+  font-size: 28px;
+  color: var(--text-light);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border: 3px solid var(--accent-yellow); /* Borde amarillo */
+  padding: 5px 10px;
+  line-height: 1;
+}
+
+.brand .xpress-text {
+  color: var(--accent-yellow);
+}
+
+.main-nav {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+
+.nav-link {
+  color: var(--text-light);
+  text-decoration: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  font-weight: 300; /* Avenir Light es ligero */
+  font-size: 16px;
+  text-transform: uppercase;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  /* Intentamos emplear Avenir Light si está disponible; si no, usamos Poppins como fallback */
+  font-family: 'Avenir Light', 'Poppins', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.nav-link:hover {
+  background: var(--accent-yellow);
+  color: var(--text-dark);
+}
+
+/* 2. Contenido Principal (Hero de pantalla completa) */
+.main-content {
+  padding: 0;
+  min-height: calc(100vh - 70px);
+  display: flex;
+  align-items: center; /* Centrado vertical */
+  justify-content: center; /* Centrado horizontal */
+  position: relative;
+}
+
+.hero-full-screen {
+  min-height: 100vh;
+  padding-top: 70px;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--overlay-color);
+  z-index: 1;
+}
+
+.hero-content {
+  z-index: 2;
+  text-align: center;
+  padding: 20px;
+}
+
+.hero-content h1 {
+  margin: 0;
+  font-size: 70px ;
+  /* Usamos Poppins SemiBold para el titular principal */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600; /* Semi Bold solicitado */
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: var(--text-light);
+  text-shadow: 0 5px 10px rgba(0, 0, 0, 0.7);
+}
+
+.hero-actions {
+  margin-top: 50px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+/* 3. Botón Principal (Comprar Entrada) */
+.btn.primary-btn {
+  display: inline-block;
+  padding: 15px 20px;
+  border-radius: 0;
+  text-decoration: none;
+  background: var(--accent-yellow);
+  color: var(--text-dark);
+  font-weight: 800;
+  font-size: 16px;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(255, 238, 88, 0.7);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn.primary-btn:hover {
+  background: var(--accent-yellow-dark);
+  box-shadow: 0 0 25px rgba(255, 238, 88, 0.9);
+}
+
+/* Eliminamos secciones no utilizadas */
+.features, .reco-panel, .site-footer {
+  display: none !important;
+}
+
+/* 4. Media Queries (Adaptación a móviles) */
+@media (max-width: 880px) {
+  .header-inner {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 15px;
+  }
+  .main-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  .nav-link {
+    font-size: 14px;
+    padding: 6px 10px;
+  }
+  .brand {
+    font-size: 24px;
+  }
+  .hero-content h1 {
+    font-size: clamp(2.5rem, 12vw, 4.5rem);
+  }
+  .btn.primary-btn {
+    padding: 12px 25px;
+    font-size: 18px;
+  }
+}
+
+/* Estilos para avatar y menú de usuario */
+.user-menu {
+  position: relative;
+  display: inline-block;
+  margin-left: 12px;
+}
+
+.avatar-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-yellow);
+  background: rgba(255,255,255,0.05);
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.avatar-initial {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+}
+
+.user-dropdown {
+  position: absolute;
+  right: 0;
+  top: 54px;
+  min-width: 200px;
+  background: #ffffff;
+  color: #222;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  padding: 10px;
+  display: none;
+  z-index: 200;
+}
+
+.user-dropdown.open, .user-dropdown[data-open='true'] {
+  display: block;
+}
+
+.user-info {
+  padding: 6px 8px;
+  border-bottom: 1px solid #eee;
+}
+.user-name {
+  font-weight: 700;
+  color: #111;
+}
+.user-email {
+  font-size: 13px;
+  color: #666;
+}
+
+.user-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 8px;
+}
+
+.user-action {
+  text-decoration: none;
+  color: #111;
+  padding: 8px 6px;
+  border-radius: 6px;
+}
+.user-action:hover {
+  background: #f5f5f5;
+}
+
+/* Estilos para la sección de recomendaciones (visible solo para usuarios autenticados) */
+#recomendaciones-section {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 20px; /* espacio desde la parte inferior */
+  z-index: 9999; /* por encima del overlay y contenido */
+  max-width: 1100px;
+  width: calc(100% - 40px);
+  background: linear-gradient(180deg, rgba(20,20,20,0.86), rgba(10,10,10,0.78));
+  color: var(--text-light);
+  border-radius: 8px;
+  padding: 16px 20px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.06);
+  font-family: 'Poppins', sans-serif;
+}
+
+#recomendaciones-section h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  color: var(--accent-yellow);
+  font-weight: 700;
+}
+
+.recommendations-list {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.recommendation-item {
+  background: rgba(255,255,255,0.03);
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: var(--text-light);
+  font-size: 14px;
+  line-height: 1.2;
+  min-width: 180px;
+  max-width: 360px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.reco-footer {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Ajustes para móviles: ocupar ancho completo y no tapar contenido importante */
+@media (max-width: 880px) {
+  #recomendaciones-section {
+    left: 0;
+    transform: none;
+    width: 100%;
+    bottom: 0;
+    border-radius: 0;
+    padding: 14px 12px;
+  }
+  .recommendation-item { min-width: 120px; font-size: 13px; }
+  .reco-footer { justify-content: center; margin-top: 10px; }
+}
+
+/* Reglas consolidadas para el sidebar de Recomendaciones (un único bloque, colores solicitados) */
+.reco-toggle-btn{
+  position:fixed;
+  right:0.5rem;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:1100;
+  background:var(--accent-yellow);
+  color:var(--text-dark);
+  border:none;
+  padding:0.6rem 0.8rem;
+  border-radius:6px 0 0 6px;
+  cursor:pointer;
+  box-shadow:0 4px 10px rgba(0,0,0,0.12);
+  font-weight:600;
+}
+.reco-sidebar{
+  position:fixed;
+  right:0;
+  top:0;
+  height:100vh;
+  width:360px;
+  max-width:92vw;
+  background:#ffffff; /* fondo blanco */
+  color:#111; /* texto oscuro por defecto */
+  box-shadow:-8px 0 24px rgba(0,0,0,0.12);
+  transform:translateX(110%);
+  transition:transform 0.28s ease;
+  z-index:1200;
+  display:flex;
+  flex-direction:column;
+  padding:0.5rem 0.6rem 0.75rem 0.6rem;
+  overflow:hidden;
+}
+.reco-sidebar.open{ transform:translateX(0); }
+.reco-header{ display:flex; align-items:center; justify-content:space-between; padding:0.25rem 0.25rem 0.5rem 0.25rem; border-bottom:1px solid #eee; }
+.reco-header h3{ margin:0; font-size:1.05rem; color: #111; }
+.reco-close-btn{ background:transparent; border:none; font-size:1.1rem; cursor:pointer; color:#333; }
+.reco-body{ flex:1; overflow:auto; padding:0.5rem 0; background:transparent; display:flex; flex-direction:column; gap:8px; overflow-y:auto; padding-right:8px; }
+.reco-input{ display:flex; gap:0.5rem; padding-top:0.5rem; border-top:1px solid #f0f0f0; }
+.reco-input input{ flex:1; padding:0.5rem; border:1px solid rgba(0,0,0,0.12); border-radius:6px; background:#fff; color:#111; }
+.reco-input input::placeholder{ color: rgba(0,0,0,0.5); }
+.reco-input .btn{ padding:0.45rem 0.6rem; background:var(--accent-yellow); color:var(--text-dark); border:none; border-radius:6px; cursor:pointer; }
+.reco-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.35); z-index:1190; opacity:0; pointer-events:none; transition:opacity 0.2s; }
+.reco-overlay.visible{ opacity:1; pointer-events:auto; }
+
+/* Burbujas dentro del sidebar: usuario = amarillo (texto negro), bot = gris oscuro (texto blanco) */
+.reco-sidebar .chat-bubble{ box-shadow:none; max-width:85%; padding:0.5rem 0.65rem; border-radius:12px; font-size:13px; line-height:1.2; }
+.reco-sidebar .chat-msg.bot .chat-bubble{ background:#2f3236; color:#fff; }
+.reco-sidebar .chat-msg.user .chat-bubble{ background:var(--accent-yellow); color:var(--text-dark); }
+
+/* Chat: estructura y formato dentro del sidebar (restaurado) */
+.reco-body .chat-msg{ display:flex; margin:0.45rem 0; align-items:flex-end; }
+.reco-body .chat-msg.bot{ justify-content:flex-start; }
+.reco-body .chat-msg.user{ justify-content:flex-end; }
+.reco-body .chat-bubble{ display:inline-block; max-width:85%; padding:10px 14px; border-radius:14px; font-size:13px; line-height:1.3; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
+.reco-body .chat-empty{ color: #666; font-size:13px; padding:8px 12px; }
+
+/* Asegurar scroll suave y orden de mensajes */
+.reco-body{ display:flex; flex-direction:column; gap:8px; overflow-y:auto; padding-right:8px; }
+
+@media (max-width:480px){ .reco-sidebar{ width:92vw } .reco-toggle-btn{ right:0 } }
+
+/* Click fuera para cerrar: añadiremos pequeño script inline en footer si es necesario (no en CSS) */
+
+/* Nota: Si el CSS no parece actualizarse en el navegador, limpia la caché o carga la hoja con un parámetro de versión en el HTML, por ejemplo: /styles/index.css?v=2 */

@@ -97,4 +97,13 @@ public class HomeController {
         return "redirect:/compra/ubicacion";
     }
 
+    // Logout: invalidar sesión y redirigir al login
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        if (session != null) {
+            session.invalidate();
+        }
+        return "redirect:/login";
+    }
+
 }

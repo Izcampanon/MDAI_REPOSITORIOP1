@@ -1,69 +1,149 @@
-/* saldo.css: estilos para la página de saldo */
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  margin: 0;
-  padding: 0;
-  background: #f5f7fb;
-  color: #222;
-}
-.container {
-  width: 90%;
-  max-width: 720px;
-  margin: 24px auto;
-  padding: 18px;
-}
-.card {
-  background: white;
-  padding: 16px;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-}
-h1 {
-  margin-bottom: 16px;
-}
-label {
-  display: block;
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-input[type="text"], input[type="number"] {
-  width: 100%;
-  padding: 8px 10px;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  margin-bottom: 12px;
-}
-.btn {
-  display: inline-block;
-  padding: 8px 14px;
-  background: #1e88e5;
-  color: white;
-  text-decoration: none;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-}
-.btn.ghost {
-  background: transparent;
-  color: #1e88e5;
-  border: 1px solid #1e88e5;
-}
-.error {
-  color: #b91c1c;
-  background: #fee2e2;
-  padding: 8px;
-  border-radius: 6px;
-}
-.success {
-  color: #065f46;
-  background: #ecfdf5;
-  padding: 8px;
-  border-radius: 6px;
-}
-.footer-links {
-  margin-top: 18px;
-}
-.footer-links a {
-  margin-right: 8px;
+/* --- 1. ESTILOS GLOBALES (Copiados de index.css para consistencia) --- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap');
+
+:root {
+  --bg-dark: #1a1a1a;
+  --accent-yellow: #ffee58;
+  --accent-yellow-dark: #fdd835;
+  --text-light: #ffffff;
+  --text-dark: #000000;
+  --header-bg: rgba(0, 0, 0, 0.90); /* Un poco más oscuro para legibilidad */
 }
 
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-light);
+  /* Misma imagen de fondo que el Index */
+  background-image: url('https://modofestival.es/wp-content/uploads/2025/04/fantastic-festival-castellon-2025-1.jpg');
+  background-size: cover;
+  background-position: center bottom;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+/* --- HEADER (Idéntico al Index) --- */
+.site-header {
+  background: var(--header-bg);
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+}
+
+.header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 25px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.brand {
+  font-weight: 900;
+  font-size: 24px;
+  color: var(--text-light);
+  border: 3px solid var(--accent-yellow);
+  padding: 5px 10px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.brand .xpress-text { color: var(--accent-yellow); }
+
+.main-nav { display: flex; gap: 20px; }
+.nav-link {
+  color: var(--text-light);
+  text-decoration: none;
+  font-weight: 300;
+  text-transform: uppercase;
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+.nav-link:hover {
+  background: var(--accent-yellow);
+  color: var(--text-dark);
+}
+
+/* --- 2. CONTENIDO ESPECÍFICO DE SALDO --- */
+.main-content {
+  padding-top: 120px; /* Importante: espacio para que el header no tape el contenido */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Alineado arriba pero con margen */
+}
+
+.saldo-box {
+  background-color: #000000; /* Caja negra sólida */
+  width: 90%;
+  max-width: 600px;
+  padding: 40px;
+  border: 1px solid #333;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+  margin-top: 50px; /* Un poco más abajo */
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #333;
+  padding-bottom: 20px;
+}
+
+.header-row h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: var(--accent-yellow);
+  text-transform: uppercase;
+}
+
+.current-balance { text-align: right; }
+.current-balance .label { display: block; font-size: 0.8rem; color: #ccc; }
+.current-balance .amount { font-size: 1.5rem; font-weight: 700; color: #fff; }
+
+/* Formulario e Inputs */
+.input-group { display: flex; gap: 0; }
+
+input[type="number"] {
+  flex: 1;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  color: #fff;
+  padding: 15px;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  outline: none;
+}
+input:focus { border-color: var(--accent-yellow); }
+
+.btn-action {
+  background: var(--accent-yellow);
+  color: var(--text-dark);
+  border: none;
+  padding: 0 25px;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: 0.3s;
+}
+.btn-action:hover { background: var(--accent-yellow-dark); }
+
+/* Alertas */
+.alert { padding: 10px; margin-bottom: 20px; text-align: center; font-size: 0.9rem; }
+.error { background: rgba(255,0,0,0.2); color: #ff6b6b; border: 1px solid red; }
+.success { background: rgba(0,255,0,0.2); color: #6bff6b; border: 1px solid green; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-inner { flex-direction: column; gap: 15px; }
+    .main-nav { flex-wrap: wrap; justify-content: center; }
+    .main-content { padding-top: 160px; } /* Más espacio en móvil porque el menú crece */
+}

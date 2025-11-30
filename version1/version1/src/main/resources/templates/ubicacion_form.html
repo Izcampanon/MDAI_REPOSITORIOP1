@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>Crear Ubicación</title>
-    <link rel="stylesheet" th:href="@{/styles/ubicacion.css}" />
+    <link rel="stylesheet" th:href="@{/styles/formularios.css}" />
 </head>
 <body>
 <div class="wrap">
@@ -19,9 +19,13 @@
 
             <button type="submit">Crear ubicación</button>
         </form>
-
-        <div class="note">Volver a <a th:href="@{/admin}">Inicio</a></div>
     </div>
+
+
+    <footer class="admin-footer">
+        <a th:href="@{/admin}">Volver al panel</a>
+    </footer>
+
 </div>
 </body>
 </html>

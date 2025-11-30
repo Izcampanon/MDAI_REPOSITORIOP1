@@ -1,0 +1,230 @@
+/* Variables de color */
+:root {
+    --color-fondo-oscuro: #000000;
+    --color-contenedor: #1a1a1a;
+    --color-texto-principal: #ffffff;
+    --color-acento: #ffee58; /* ¡AMARILLO MODIFICADO! */
+    --color-error: #ff4d4d;
+    --color-info: #4dff4d;
+    --color-gris-claro: #ccc;
+    --fuente-principal: 'Poppins', 'Arial', sans-serif;
+}
+
+/* --- Base --- */
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    /*background-color: var(--color-fondo-oscuro);*/
+    background-image: url('https://modofestival.es/wp-content/uploads/2025/04/fantastic-festival-castellon-2025-1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+
+
+    color: var(--color-texto-principal);
+    font-family: var(--fuente-principal);
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.entrada-wrap {
+    width: 100%;
+    max-width: 600px;
+    padding: 30px;
+    background-color: var(--color-contenedor);
+    box-shadow: 0 0 15px rgba(255, 238, 88, 0.3); /* Sombra ajustada al nuevo amarillo */
+    border-radius: 8px;
+}
+
+/* --- Cabecera y Título --- */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    color: var(--color-acento);
+    font-size: 2em;
+    border-bottom: 2px solid var(--color-acento);
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+/* --- Mensajes de Feedback --- */
+.error, .info, .success {
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.error {
+    background-color: rgba(255, 77, 77, 0.2);
+    color: var(--color-error);
+    border: 1px solid var(--color-error);
+}
+
+.info, .success {
+    background-color: rgba(77, 255, 77, 0.2);
+    color: var(--color-info);
+    border: 1px solid var(--color-info);
+}
+
+/* --- Resumen del Evento --- */
+.evento-resumen {
+    margin-bottom: 30px;
+    padding: 15px;
+    border: 1px dashed #333;
+    border-radius: 4px;
+}
+
+.evento-resumen h2 {
+    color: var(--color-acento);
+    font-size: 1.5em;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.evento-resumen p {
+    margin: 5px 0;
+    font-size: 1em;
+}
+
+.evento-resumen strong {
+    color: var(--color-gris-claro);
+    font-weight: 500;
+}
+
+
+/* --- Formulario de Entrada --- */
+.entrada-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.entrada-form label {
+    font-weight: bold;
+    color: var(--color-texto-principal);
+    margin-bottom: 5px;
+    display: block;
+    font-size: 1.1em;
+}
+
+input[type="number"],
+select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--color-acento);
+    border-radius: 4px;
+    background-color: var(--color-fondo-oscuro);
+    color: var(--color-texto-principal);
+    font-size: 1em;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+input[type="number"]:focus,
+select:focus {
+    border-color: var(--color-texto-principal);
+    outline: none;
+}
+
+/* --- Acciones y Botones --- */
+.actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    gap: 15px;
+}
+
+.actions button[type="submit"] {
+    flex-grow: 1;
+    background-color: var(--color-acento);
+    color: var(--color-fondo-oscuro);
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.actions button[type="submit"]:hover {
+    background-color: #d1c84f; /* Tono de hover ajustado */
+}
+
+.btn-link {
+    flex-shrink: 0;
+    color: var(--color-gris-claro);
+    text-decoration: none;
+    padding: 12px 15px;
+    border: 1px solid var(--color-gris-claro);
+    border-radius: 4px;
+    transition: color 0.3s, border-color 0.3s;
+    text-align: center;
+}
+
+.btn-link:hover {
+    color: var(--color-texto-principal);
+    border-color: var(--color-texto-principal);
+}
+
+/* --- Pie de Página --- */
+footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #333;
+}
+
+footer a {
+    color: var(--color-acento);
+    text-decoration: none;
+    font-weight: bold;
+    padding: 8px 15px;
+    border: 1px solid var(--color-acento);
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+footer a:hover {
+    background-color: var(--color-acento);
+    color: var(--color-fondo-oscuro);
+}
+
+/* --- Responsive (Ajustes para Pantallas Pequeñas) --- */
+@media (max-width: 600px) {
+    .entrada-wrap {
+        padding: 20px;
+    }
+
+    header h1 {
+        font-size: 1.8em;
+    }
+
+    .actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .actions button[type="submit"],
+    .btn-link {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}

@@ -1,57 +1,289 @@
-/* Estilos para formulario de entrada y pago */
-/* Archivo: src/main/resources/static/styles/entrada.css */
+/* =========================================
+   1. VARIABLES Y CONFIGURACIÓN GLOBAL
+   ========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap');
 
-:root{
-  --bg: #f8fafc;
-  --card: #ffffff;
-  --muted: #6b7280;
-  --accent: #2563eb;
-  --success: #10b981;
-  --danger: #b91c1c;
+:root {
+  --bg-dark: #000000;
+  --panel-bg: rgba(20, 20, 20, 0.95); /* Fondo semitransparente para el panel */
+  --accent-yellow: #ffee58;           /* Amarillo marca */
+  --text-white: #ffffff;
+  --text-gray: #cccccc;
+  --border-color: #333333;
+  --danger-color: #d32f2f;            /* Rojo para devolver */
+  --header-bg: rgba(0, 0, 0, 0.9);    /* Fondo del menú */
 }
 
-body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; background:var(--bg); color:#111827; margin:0}
-.container{max-width:900px;margin:36px auto;padding:0 18px}
-
-.entrada-wrap, .pago-wrap{
-  max-width:820px;
-  margin:36px auto;
-  padding:18px;
-  background:linear-gradient(180deg, #ffffff, #fbfdff);
-  border-radius:10px;
-  box-shadow:0 10px 30px rgba(2,6,23,0.06);
+* {
+  box-sizing: border-box;
 }
 
-header h1{margin:0 0 12px 0;font-size:22px;color:#0f172a}
-
-.evento-resumen{
-  background:var(--card);
-  padding:14px;
-  border-radius:8px;
-  margin-bottom:14px;
-  border:1px solid rgba(15,23,42,0.04);
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-white);
+  /* Imagen de fondo del festival */
+  background-image: url('https://modofestival.es/wp-content/uploads/2025/04/fantastic-festival-castellon-2025-1.jpg');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+  background-color: var(--bg-dark);
+  min-height: 100vh;
+  /* Centrado vertical si la página es corta, o scroll si es larga */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.entrada-form label{display:block;margin:10px 0 6px;color:var(--muted);font-weight:600}
-.entrada-form select, .entrada-form input[type="number"], .entrada-form input[type="text"]{
-  width:100%;padding:10px 12px;border-radius:8px;border:1px solid #e6eef9;background:#fff;color:#0f172a
+/* =========================================
+   2. HEADER (Barra de Navegación)
+   ========================================= */
+.site-header {
+  background: var(--header-bg);
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
-.actions{margin-top:16px;display:flex;gap:10px;align-items:center}
-.actions button{background:var(--accent);color:#fff;padding:10px 14px;border-radius:8px;border:none;cursor:pointer}
-.actions .btn-link{color:var(--accent);text-decoration:none;padding:10px 12px;border-radius:8px}
-
-.resumen{background:var(--card);padding:14px;border-radius:8px;border:1px solid rgba(15,23,42,0.04);margin-bottom:12px}
-.pago-wrap .acciones .btn{background:var(--success);color:#fff;padding:10px 14px;border-radius:8px;text-decoration:none}
-
-.error{color:var(--danger);margin-bottom:12px}
-.info{color:#064e3b;margin-bottom:12px}
-
-footer{margin-top:16px}
-
-/* Responsive */
-@media (max-width:600px){
-  .entrada-wrap, .pago-wrap{padding:12px;margin:18px}
-  header h1{font-size:18px}
+.header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 25px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
+.brand {
+  font-weight: 900;
+  font-size: 24px;
+  color: var(--text-white);
+  border: 3px solid var(--accent-yellow);
+  padding: 5px 10px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.brand .xpress-text { color: var(--accent-yellow); }
+
+.main-nav { display: flex; gap: 20px; }
+
+.nav-link {
+  color: var(--text-white);
+  text-decoration: none;
+  font-size: 14px;
+  text-transform: uppercase;
+  padding: 8px 15px;
+  border-radius: 4px;
+  transition: 0.3s;
+}
+
+.nav-link:hover, .nav-link.active {
+  background: var(--accent-yellow);
+  color: #000;
+  font-weight: 700;
+}
+
+/* =========================================
+   3. CONTENEDOR PRINCIPAL
+   ========================================= */
+.container {
+  width: 100%;
+  max-width: 900px;
+  margin: 120px 20px 40px 20px; /* Margen superior para el header fijo */
+  background-color: var(--panel-bg);
+  padding: 40px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+}
+
+/* Títulos */
+h1 {
+  color: var(--accent-yellow);
+  font-size: 2rem;
+  text-transform: uppercase;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 30px;
+  font-weight: 800;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 20px;
+}
+
+h2 {
+  font-size: 1.3rem;
+  color: #fff;
+  margin-top: 0;
+  margin-bottom: 15px;
+  border-left: 4px solid var(--accent-yellow);
+  padding-left: 15px;
+}
+
+h3 {
+  font-size: 1rem;
+  color: #888;
+  margin-top: 30px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+p {
+  color: var(--text-gray);
+  line-height: 1.6;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+}
+p strong { color: #fff; }
+
+/* =========================================
+   4. LAYOUT FLEX (Info Izq | QR Der)
+   ========================================= */
+.detalle-flex {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+/* Columna Izquierda */
+.columna-info {
+    flex: 1; /* Ocupa el espacio sobrante */
+    min-width: 300px;
+}
+
+/* Columna Derecha (QR) */
+.columna-qr {
+    /* TAMAÑO FIJO PEQUEÑO (Solicitado) */
+    flex: 0 0 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Caja blanca del QR */
+.qr-box {
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    width: 100%; /* Se ajusta a los 180px del padre */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+.qr-box img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.qr-box p {
+    color: #000;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-top: 8px;
+    margin-bottom: 0;
+    text-transform: uppercase;
+}
+
+/* =========================================
+   5. TABLA DE ENTRADAS
+   ========================================= */
+.entradas-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  background-color: #000;
+  border: 1px solid var(--border-color);
+}
+
+.entradas-table thead th {
+  background-color: #222;
+  color: var(--accent-yellow);
+  text-align: left;
+  padding: 12px 15px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+.entradas-table tbody td {
+  padding: 12px 15px;
+  border-bottom: 1px solid var(--border-color);
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.entradas-table tbody tr:last-child td { border-bottom: none; }
+
+/* =========================================
+   6. BOTONES
+   ========================================= */
+/* Botón Rojo (Devolver) */
+button.btn {
+  background-color: transparent;
+  color: var(--danger-color);
+  border: 1px solid var(--danger-color);
+  padding: 12px 20px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.3s;
+  width: 100%;
+  margin-top: 10px;
+}
+button.btn:hover {
+  background-color: var(--danger-color);
+  color: #fff;
+}
+
+/* Botón Ghost (Volver) */
+a.btn.ghost {
+  display: block;
+  text-align: center;
+  background-color: transparent;
+  color: #fff;
+  border: 1px solid #fff;
+  padding: 12px 20px;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  margin-top: 15px;
+  transition: 0.3s;
+}
+a.btn.ghost:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+/* Alertas */
+.error { background: rgba(211,47,47,0.2); color: #ff8a80; border: 1px solid red; padding: 10px; margin-bottom: 20px; text-align: center; }
+.success { background: rgba(56,142,60,0.2); color: #66bb6a; border: 1px solid green; padding: 10px; margin-bottom: 20px; text-align: center; }
+
+/* =========================================
+   7. RESPONSIVE (Móviles)
+   ========================================= */
+@media (max-width: 768px) {
+    .detalle-flex {
+        flex-direction: column-reverse; /* El QR pasa arriba o abajo según gusto */
+        align-items: center;
+    }
+
+    .columna-info, .columna-qr {
+        width: 100%;
+        flex: none; /* Quita anchos fijos */
+    }
+
+    .columna-qr {
+        margin-bottom: 30px;
+        align-items: center;
+    }
+
+    .qr-box {
+        max-width: 180px; /* Mantener pequeño en móvil */
+    }
+
+    .header-inner { flex-direction: column; gap: 10px; }
+    .main-nav { flex-wrap: wrap; justify-content: center; }
+}

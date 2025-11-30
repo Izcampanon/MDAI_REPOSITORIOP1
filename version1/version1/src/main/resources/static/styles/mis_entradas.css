@@ -1,76 +1,262 @@
-/* Estilos básicos para la vista Mis Entradas */
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #f7f7f7;
-    color: #333;
-}
-.container {
-    width: 90%;
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 20px;
-}
-.site-header {
-    background: #1e88e5;
-    color: white;
-    padding: 10px 0;
-}
-.header-inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.brand {
-    font-weight: bold;
-    font-size: 1.2rem;
-    margin-left: 8px;
-}
-.main-nav .nav-link {
-    color: white;
-    text-decoration: none;
-    margin-left: 12px;
-}
-.main-content h1 {
-    margin-top: 20px;
-}
-.entradas-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-.entradas-table th, .entradas-table td {
-    padding: 10px 12px;
-    border-bottom: 1px solid #eee;
-    text-align: left;
-}
-.entradas-table thead th {
-    background: #fafafa;
-    color: #555;
-}
-.actions {
-    margin-top: 16px;
-}
-.btn {
-    display: inline-block;
-    padding: 8px 14px;
-    background: #1e88e5;
-    color: white;
-    text-decoration: none;
-    border-radius: 4px;
-    margin-right: 8px;
-}
-.btn.ghost {
-    background: transparent;
-    color: #1e88e5;
-    border: 1px solid #1e88e5;
-}
-.site-footer {
-    margin-top: 30px;
-    padding: 12px 0;
-    text-align: center;
-    color: #777;
+/* =========================================
+   1. VARIABLES Y CONFIGURACIÓN GLOBAL
+   ========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap');
+
+:root {
+  --bg-dark: #191919;
+  --accent-yellow: #ffee58;
+  --text-light: #ffffff;
+  --header-bg: rgba(0, 0, 0, 0.9);
+  --border-line: #333;
 }
 
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-light);
+  /* Fondo global oscuro */
+  background-color: #191919;
+  background-image: url('https://modofestival.es/wp-content/uploads/2025/04/fantastic-festival-castellon-2025-1.jpg');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+/* =========================================
+   2. HEADER UNIFICADO
+   ========================================= */
+.site-header {
+  background: var(--header-bg);
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 25px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.brand {
+  font-weight: 900;
+  font-size: 24px;
+  color: var(--text-light);
+  border: 3px solid var(--accent-yellow);
+  padding: 5px 10px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.brand .xpress-text { color: var(--accent-yellow); }
+
+.main-nav { display: flex; gap: 20px; align-items: center; }
+
+.nav-link {
+  color: var(--text-light);
+  text-decoration: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  font-size: 14px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover, .nav-link.active {
+  background: var(--accent-yellow);
+  color: #000;
+  font-weight: 700;
+}
+
+/* =========================================
+   3. CONTENIDO PRINCIPAL (Lista)
+   ========================================= */
+.main-content {
+  padding-top: 130px; /* Espacio header */
+  padding-bottom: 60px;
+  min-height: 100vh;
+  background-color: #191919; /* Fondo negro sólido detrás de la lista */
+  display: flex;
+  justify-content: center;
+}
+
+.content-container {
+  width: 100%;
+  max-width: 900px;
+  padding: 0 20px;
+}
+
+.page-title {
+  font-size: 3rem;
+  text-align: center;
+  margin-bottom: 150px;
+  margin-bottom: 50px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.section-title {
+  font-size: 1.2rem;
+  color: var(--accent-yellow);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--accent-yellow);
+  display: inline-block;
+  padding-bottom: 5px;
+}
+.text-muted { color: #888; border-color: #444; }
+
+/* =========================================
+   4. ESTILOS DE FILA (Row Style)
+   ========================================= */
+.ticket-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.ticket-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 0;
+  border-bottom: 1px solid var(--border-line);
+  transition: background 0.3s;
+}
+
+.ticket-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.ticket-info-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* Fecha pequeña arriba */
+.ticket-date {
+  font-size: 0.9rem;
+  color: #bbb;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Título Grande */
+.ticket-main {
+  font-size: 1.4rem;
+  line-height: 1.2;
+}
+
+.event-name {
+  font-weight: 700;
+  color: #fff;
+}
+
+.separator {
+  color: #555;
+  margin: 0 8px;
+}
+
+.event-details {
+  font-weight: 300;
+  color: #ccc;
+  font-size: 1.2rem;
+}
+
+/* Botón Ver */
+.btn-ver {
+  background-color: var(--accent-yellow);
+  color: #000;
+  text-decoration: none;
+  padding: 10px 30px;
+  font-weight: 700;
+  text-transform: uppercase;
+  display: inline-block;
+  transition: background 0.3s;
+}
+
+.btn-ver:hover {
+  background-color: #fdd835;
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid #666;
+  color: #aaa;
+}
+.btn-ghost:hover {
+  border-color: #fff;
+  color: #fff;
+}
+
+/* Estados */
+.empty-state {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  border: 1px dashed #333;
+  margin-bottom: 30px;
+}
+
+.mt-large { margin-top: 60px; }
+.opacity-dim { opacity: 0.6; }
+
+/* =========================================
+   5. FOOTER ACCIONES
+   ========================================= */
+.actions-footer {
+  margin-top: 60px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
+}
+
+.btn-link-yellow {
+  color: var(--accent-yellow);
+  text-decoration: none;
+  font-weight: 600;
+}
+.btn-link-yellow:hover { text-decoration: underline; }
+
+.btn-primary {
+  background: #333;
+  color: #fff;
+  padding: 12px 25px;
+  text-decoration: none;
+  font-weight: 600;
+  border: 1px solid #555;
+  text-transform: uppercase;
+  transition: 0.3s;
+}
+.btn-primary:hover {
+  background: var(--accent-yellow);
+  color: #000;
+  border-color: var(--accent-yellow);
+}
+
+.site-footer {
+  padding: 40px 0;
+  text-align: center;
+  color: #444;
+  font-size: 0.85rem;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .header-inner { flex-direction: column; gap: 10px; }
+  .main-nav { flex-wrap: wrap; justify-content: center; }
+  .ticket-row { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .ticket-action { width: 100%; }
+  .btn-ver { width: 100%; text-align: center; }
+}

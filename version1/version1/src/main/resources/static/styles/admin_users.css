@@ -1,76 +1,184 @@
-/* Estilos para admin_users.html */
-:root{
-  --bg:#f6f8fa;
-  --card:#ffffff;
-  --muted:#6b7280;
-  --accent:#2563eb;
-  --danger:#ef4444;
-  --border:#e5e7eb;
+/* Variables de color (Consistentes con el resto de la interfaz) */
+:root {
+    --color-fondo-pagina: #cccccc; /* Gris claro del diseño */
+    --color-fondo-tarjeta: #ffffff; /* Blanco para la tarjeta que contiene la tabla */
+    --color-acento: #ffee58; /* Amarillo consistente */
+    --color-texto-oscuro: #191919;
+    --color-texto-gris: #555555;
+    --color-danger: #b91c1c;
+    --fuente-principal: 'Poppins', 'Arial', sans-serif;
 }
 
-body{
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  background:var(--bg);
-  color:#111827;
-  margin:0;
+/* 1. Estilos Base y Contenedor */
+body {
+    background-color: var(--color-fondo-pagina);
+    font-family: var(--fuente-principal);
+    color: var(--color-texto-oscuro);
+    padding-top: 50px; /* Asegura espacio para la cabecera si es fija */
 }
 
-.admin-wrap.users-wrap{
-  max-width:1100px;
-  margin:28px auto;
-  padding:16px;
+.users-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
-.admin-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:16px;
-  margin-bottom:16px;
+/* 2. Cabecera y Título */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
 }
 
-.admin-header h1{
-  margin:0;
-  font-size:1.4rem;
+.admin-header h1 {
+    font-size: 2em;
+    font-weight: 700;
+    color: var(--color-texto-oscuro);
+    margin: 0;
+    text-transform: uppercase;
 }
 
-.admin-actions .btn{ text-decoration:none; padding:8px 12px; border-radius:6px; border:1px solid var(--border); background:transparent; color:var(--accent); }
-
-.card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:8px;
-  padding:12px;
-  box-shadow:0 1px 2px rgba(0,0,0,0.03);
+/* Estilo del botón "Volver al panel" */
+.btn.ghost {
+    background: transparent;
+    color: var(--color-texto-oscuro);
+    border: 1px solid var(--color-texto-oscuro);
+    padding: 8px 15px;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
 }
 
-.table-responsive{ overflow:auto; }
-
-.users-table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:700px;
+.btn.ghost:hover {
+    background-color: var(--color-texto-oscuro);
+    color: var(--color-texto-claro);
 }
 
-.users-table thead tr{ background:#f3f4f6; }
-.users-table th, .users-table td{
-  text-align:left;
-  padding:10px 12px;
-  border-bottom:1px solid var(--border);
-  font-size:0.95rem;
+/* 3. Estilos de la Tarjeta (Contenedor de la Tabla) */
+.card {
+    background-color: var(--color-fondo-tarjeta);
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.users-table tbody tr:hover{ background:#fbfdff; }
-
-.alert{ padding:10px 12px; border-radius:6px; margin-bottom:12px; }
-.alert-error{ background:#fff1f2; color:var(--danger); border:1px solid rgba(239,68,68,0.12); }
-.alert-success{ background:#ecfdf5; color:#065f46; border:1px solid rgba(16,185,129,0.12); }
-
-.admin-footer{ margin-top:16px; text-align:center; color:var(--muted); font-size:0.9rem; }
-
-@media (max-width:700px){
-  .admin-wrap.users-wrap{ padding:10px; }
-  .users-table{ min-width:600px; }
-  .admin-header h1{ font-size:1.1rem; }
+/* --- Alertas/Mensajes --- */
+.alert {
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-align: center;
+}
+.alert-error {
+    background-color: #fee2e2;
+    border: 1px solid var(--color-danger);
+    color: var(--color-danger);
+}
+.alert-success {
+    background-color: #d1fae5;
+    border: 1px solid #059669;
+    color: #059669;
 }
 
+/* 4. Estilos de la Tabla */
+.table-responsive {
+    overflow-x: auto; /* Permite scroll horizontal en móviles si la tabla es muy ancha */
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px; /* Ancho mínimo para legibilidad */
+}
+
+/* Cabecera de la Tabla (Thead) */
+.users-table thead th {
+    background-color: var(--color-acento); /* Fondo amarillo */
+    color: var(--color-texto-oscuro);
+    padding: 12px 10px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    border: none;
+    white-space: nowrap;
+}
+
+/* Celdas del Cuerpo (Tbody) */
+.users-table tbody td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    font-size: 0.9em;
+    white-space: nowrap;
+    color: var(--color-texto-oscuro);
+}
+
+.users-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Estilo de las filas (Para imitar las líneas negras del diseño) */
+.users-table tbody tr {
+    background-color: var(--color-fondo-tarjeta);
+    border-bottom: 1px solid var(--color-texto-oscuro); /* Línea negra separadora */
+}
+
+/* Estilo hover para filas */
+.users-table tbody tr:hover {
+    background-color: #f7f7f7;
+}
+
+/* Estilo para los botones de Acción */
+.users-table tbody td a.btn,
+.users-table tbody td button.btn {
+    display: inline-block;
+    padding: 6px 10px;
+    margin-right: 5px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.8em;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s;
+    background-color: #e0e0e0; /* Gris por defecto */
+    color: var(--color-texto-oscuro);
+}
+
+.users-table tbody td a.btn:hover,
+.users-table tbody td button.btn:hover {
+    background-color: #ccc;
+}
+
+.users-table tbody td button.btn.danger {
+    background-color: var(--color-danger);
+    color: var(--color-texto-claro);
+}
+
+.users-table tbody td button.btn.danger:hover {
+    background-color: #9c1717;
+}
+
+/* 5. Pie de Página */
+.admin-footer {
+    text-align: center;
+    margin-top: 30px;
+    color: var(--color-texto-gris);
+}
+
+/* 6. Responsive */
+@media (max-width: 768px) {
+    .admin-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .admin-header h1 {
+        font-size: 1.5em;
+    }
+    .users-wrap {
+        padding: 10px;
+    }
+}

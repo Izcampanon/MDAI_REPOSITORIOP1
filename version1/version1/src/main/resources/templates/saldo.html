@@ -2,35 +2,84 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Mi Saldo</title>
+    <title>Mi Saldo - Entrada Xpress</title>
     <link rel="stylesheet" th:href="@{/styles/saldo.css}" />
+    <link rel="stylesheet" th:href="@{/styles/index.css}" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
-<div class="container">
-    <h1>Mi saldo</h1>
 
-    <div th:if="${error}" th:text="${error}" style="color:#b91c1c;padding:8px;background:#fee2e2;border-radius:6px;margin-bottom:12px;"></div>
-    <div th:if="${success}" th:text="${success}" style="color:#065f46;padding:8px;background:#ecfdf5;border-radius:6px;margin-bottom:12px;"></div>
+<header class="site-header">
+    <div class="container header-inner">
+        <div class="brand">ENTRADA<span class="xpress-text">XPRESS</span></div>
+        <nav class="main-nav">
+            <a href="/" class="nav-link">Inicio</a>
+            <a href="/mis-entradas" class="nav-link">Mis entradas</a>
+            <a href="/saldo" class="nav-link">Saldo</a>
+            <a href="/comprar" class="nav-link">Compra Entradas</a>
+            <a href="/login" class="nav-link">Login</a>
 
-    <div class="card">
-        <p><strong>Usuario:</strong> <span th:text="${usuario.nombre}"></span></p>
-        <p><strong>Email:</strong> <span th:text="${usuario.email}"></span></p>
-        <p><strong>Saldo actual:</strong> <span th:text="${usuario.saldo}"></span> €</p>
+            <!-- Avatar con inicial del usuario y menú desplegable -->
+            <div th:if="${session.usuario != null}" class="user-menu">
+                <button class="avatar-btn" th:onclick="|document.getElementById('user-dropdown').classList.toggle('open')|">
+                    <span class="avatar-initial" th:text="${session.usuario.nombre != null && session.usuario.nombre.length() > 0 ? session.usuario.nombre.substring(0,1).toUpperCase() : 'U'}"></span>
+                </button>
+                <div id="user-dropdown" class="user-dropdown" th:attrappend="data-open=${false}">
+                    <div class="user-info">
+                        <div class="user-name" th:text="${session.usuario.nombre}"></div>
+                        <div class="user-email" th:text="${session.usuario.email}"></div>
+                    </div>
+                    <div class="user-actions">
+                        <a href="/logout" class="user-action">Cerrar sesión</a>
+                    </div>
+                </div>
+            </div>
+
+        </nav>
     </div>
+</header>
 
-    <div style="margin-top:16px;">
-        <form th:action="@{/saldo/add}" method="post">
-            <label for="cantidad">Cantidad a añadir (€):</label>
-            <input type="text" id="cantidad" name="cantidad" th:value="${cantidad}" placeholder="Ej. 10 o 5.50" />
-            <button type="submit" class="btn">Añadir saldo</button>
+<main class="main-content">
+    <div class="saldo-box">
+        <div class="header-row">
+            <h1>Mi Saldo</h1>
+            <div class="current-balance">
+                <span class="label">Disponible:</span>
+                <span class="amount" th:text="${usuario.saldo} + ' €'">0.00 €</span>
+            </div>
+        </div>
+
+        <div th:if="${error}" th:text="${error}" class="alert error"></div>
+        <div th:if="${success}" th:text="${success}" class="alert success"></div>
+
+        <form th:action="@{/saldo/add}" method="post" class="saldo-form">
+            <div class="input-group">
+                <input type="number" step="0.01" id="cantidad" name="cantidad"
+                       th:value="${cantidad}" placeholder="Introduce cantidad a recargar *" required />
+                <button type="submit" class="btn-action">Añadir saldo</button>
+            </div>
         </form>
     </div>
+</main>
 
-    <div style="margin-top:18px;">
-        <a th:href="@{/}" class="btn ghost">Volver al inicio</a>
-        <a th:href="@{/mis-entradas}" class="btn">Mis entradas</a>
-    </div>
-</div>
+<script>
+  // Cerrar dropdown al hacer click fuera
+  document.addEventListener('click', function(event) {
+    var dropdown = document.getElementById('user-dropdown');
+    var btn = document.querySelector('.avatar-btn');
+    if (!dropdown) return;
+    if (btn && btn.contains(event.target)) return; // si clic en el botón, no cerrar (toggle ya lo hace)
+    if (!dropdown.contains(event.target)) {
+      dropdown.classList.remove('open');
+    }
+  });
+
+  // Cerrar dropdown al cambiar de página
+  window.addEventListener('beforeunload', function() {
+    var dropdown = document.getElementById('user-dropdown');
+    if (dropdown) dropdown.classList.remove('open');
+  });
+</script>
+
 </body>
 </html>
-

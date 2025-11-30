@@ -4,28 +4,40 @@
     <meta charset="UTF-8" />
     <title>Panel de administración</title>
     <link rel="stylesheet" th:href="@{/styles/admin.css}" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
+<header class="site-header">
+    <div class="container header-inner">
+        <div class="brand">ENTRADA<span class="xpress-text">XPRESS</span></div>
+        <nav class="main-nav">
+            <a th:href="@{/}" class="nav-link">Inicio</a>
+            <a th:href="@{/login}" class="nav-link">Login</a>
+            <a th:href="@{/mis-entradas}" class="nav-link">Mis Entradas</a>
+            <a th:href="@{/comprar}" class="nav-link">Compra Entradas</a>
+            <a th:href="@{/admin}" class="nav-link admin-active">Admin</a>
+        </nav>
+    </div>
+</header>
+
 <div class="admin-wrap">
-    <header class="admin-header">
-        <h1>Panel de administración</h1>
-    </header>
+    <h1 class="page-title">Panel de administración</h1>
 
     <div th:if="${error}" class="error" th:text="${error}"></div>
     <div th:if="${success}" class="success" th:text="${success}"></div>
 
     <nav class="admin-nav">
         <ul>
-            <li><a th:href="@{/admin/ubicacion/new}">Introducir ubicaciones nuevas</a></li>
-            <li><a th:href="@{/admin/local/new}">Introducir locales nuevos</a></li>
-            <li><a th:href="@{/admin/evento/new}">Introducir eventos nuevos</a></li>
-            <li><a th:href="@{/admin/users}">Gestionar usuarios</a></li>
+            <li><a th:href="@{/admin/ubicacion/new}" class="nav-btn btn-yellow">Introducir ubicaciones nuevas</a></li>
+            <li><a th:href="@{/admin/local/new}" class="nav-btn btn-yellow">Introducir locales nuevos</a></li>
+            <li><a th:href="@{/admin/evento/new}" class="nav-btn btn-yellow">Introducir eventos nuevos</a></li>
+            <li><a th:href="@{/admin/users}" class="nav-btn btn-yellow">Gestionar usuarios</a></li>
         </ul>
     </nav>
 
     <main class="admin-main">
+        <h2 class="section-title">Acciones rápidas</h2>
         <section class="admin-card">
-            <h2>Acciones rápidas</h2>
             <p>Usa las opciones del menú para crear ubicaciones, locales o eventos. Las validaciones del servidor comprobarán los datos antes de guardarlos y mostrarán mensajes de error si algo no es correcto.</p>
         </section>
     </main>

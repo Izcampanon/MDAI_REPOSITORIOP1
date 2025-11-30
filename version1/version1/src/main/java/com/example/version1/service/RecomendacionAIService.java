@@ -87,6 +87,7 @@ public class RecomendacionAIService {
         return sb.toString();
     }
 
+
     private static String safe(String s) {
         return s == null ? "" : s;
     }

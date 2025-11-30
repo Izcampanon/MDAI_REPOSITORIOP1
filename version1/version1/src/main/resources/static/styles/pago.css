@@ -1,0 +1,191 @@
+/* Variables de color */
+:root {
+    --color-fondo: #000000;
+    --color-texto-principal: #ffffff;
+    --color-acento: #FFEE58; /* AMARILLO CORREGIDO a un tono más brillante y consistente */
+    --color-error: #b91c1c;
+    --color-error-bg: #fee2e2;
+    --color-gris-claro: #ccc;
+    --color-negro-tarjeta: #191919; /* Negro específico */
+    --fuente-principal: 'Arial', sans-serif;
+}
+
+/* --- Base del Cuerpo --- */
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* ELIMINA LAS BARRAS DE SCROLL */
+    box-sizing: border-box;
+}
+
+body {
+    background-image: url('https://modofestival.es/wp-content/uploads/2025/04/fantastic-festival-castellon-2025-1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+
+    color: var(--color-texto-principal);
+    font-family: var(--fuente-principal);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+
+    padding: 40px 20px;
+}
+
+/* --- Contenedor Principal --- */
+.container {
+    width: 100%;
+    max-width: 900px;
+    padding: 30px;
+    /* CORRECCIÓN CLAVE: Fondo negro semi-transparente para verse sobre la imagen */
+    background-color: rgb(25 25 25);
+    border-radius: 8px;
+    /* Sombra opcional para darle profundidad */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+}
+
+/* --- Título Principal --- */
+h1 {
+    color: var(--color-texto-principal);
+    font-size: 3em;
+    font-weight: bold;
+    margin-bottom: 40px;
+    line-height: 1.1;
+}
+
+/* --- Mensajes de Error/Feedback --- */
+div[th\\:if="${error}"] {
+    color: var(--color-error) !important;
+    background-color: rgba(185, 28, 28, 0.2) !important; /* Más oscuro para fondo oscuro */
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    border: 1px solid var(--color-error);
+    text-align: center;
+}
+
+/* --- Tarjeta de Detalles (Resumen del Pedido) --- */
+.card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px 40px;
+    margin-bottom: 40px;
+    padding: 20px 0;
+}
+
+.card p {
+    margin: 0;
+    padding: 5px 0;
+    font-size: 1.1em;
+}
+
+.card strong {
+    font-weight: normal;
+}
+
+/* Estilo específico para las etiquetas (izquierda) */
+.card p strong {
+    color: var(--color-gris-claro);
+    display: inline-block;
+    min-width: 150px;
+}
+
+/* Estilo para los valores (derecha) */
+.card p span {
+    color: var(--color-acento); /* Usa la variable de acento */
+    font-weight: bold;
+}
+
+/* Estilo especial para el Precio Total */
+.card p:last-of-type {
+    grid-column: 1 / span 2;
+    font-size: 1.5em;
+    padding-top: 20px;
+    margin-top: 10px;
+    border-top: 2px solid var(--color-gris-claro);
+}
+.card p:last-of-type strong {
+    color: var(--color-acento);
+    font-weight: bold;
+    text-decoration: underline;
+}
+.card p:last-of-type span {
+    font-size: 1.1em;
+}
+
+/* Estilo para el Saldo Disponible */
+.card p:nth-child(4) span {
+    color: var(--color-acento);
+}
+
+/* --- Formulario y Botones --- */
+form {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
+}
+
+/* Botón principal (Confirmar y pagar) */
+.btn:not(.ghost) {
+    background-color: var(--color-acento);
+    color: var(--color-fondo);
+}
+
+.btn:not(.ghost):hover {
+    background-color: #fdd835; /* Un tono más oscuro basado en FFEE58 */
+}
+
+/* Botón fantasma (Cancelar) */
+.btn.ghost {
+    background-color: transparent;
+    color: var(--color-texto-principal);
+    border: 1px solid var(--color-gris-claro);
+}
+
+.btn.ghost:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--color-texto-principal);
+}
+
+/* --- Responsive --- */
+@media (max-width: 650px) {
+    .container {
+        padding: 20px;
+    }
+    h1 {
+        font-size: 2.5em;
+    }
+    .card {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    .card p:last-of-type {
+        grid-column: 1 / span 1;
+    }
+    form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .btn {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}

@@ -1,15 +1,217 @@
-/* Estilos para admin_user_edit.html */
-.admin-wrap { max-width:800px; margin:20px auto; padding:0 16px; }
-.admin-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
-.card { background:#fff; border:1px solid #e5e7eb; border-radius:8px; padding:16px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
-.card div { margin-bottom:10px; }
-.card label { display:block; font-weight:600; margin-bottom:6px; }
-.card input[type="text"], .card input[type="email"], .card input[type="password"], .card input[type="number"] { width:100%; padding:8px; border-radius:6px; border:1px solid #d1d5db; }
-.actions { display:flex; gap:8px; }
-.btn { padding:8px 12px; border-radius:6px; background:#2563eb; color:#fff; border:none; cursor:pointer; text-decoration:none; }
-.btn.ghost { background:transparent; color:#2563eb; border:1px solid #c7d2fe; }
-.alert { padding:8px; border-radius:6px; margin-bottom:8px; }
-.alert-error { background:#fee2e2; color:#b91c1c; }
-.admin-footer { text-align:center; color:#6b7280; margin-top:18px; }
-@media (max-width:600px) { .admin-header { flex-direction:column; align-items:flex-start; gap:8px; } }
+/* Variables de color (Consistentes con la interfaz de Admin) */
+:root {
+    --color-fondo-pagina: #cccccc; /* Gris claro del fondo */
+    --color-fondo-tarjeta: #ffffff; /* Blanco para las tarjetas de contenido */
+    --color-acento: #ffee58; /* Amarillo consistente */
+    --color-texto-oscuro: #191919;
+    --color-texto-gris: #555555;
+    --color-danger: #b91c1c;
+    --header-bg: rgba(0, 0, 0, 0.85);
+    --fuente-principal: 'Poppins', 'Arial', sans-serif;
+}
 
+/* --- Base --- */
+body {
+    background-color: var(--color-fondo-pagina);
+    font-family: var(--fuente-principal);
+    color: var(--color-texto-oscuro);
+    padding-top: 70px; /* Espacio para la cabecera fija */
+    margin: 0;
+}
+
+.admin-wrap {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* --- 1. Cabecera y Acciones (Adaptado de admin_user_detail.css) --- */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--color-texto-oscuro);
+}
+
+.admin-header h1 {
+    font-size: 2em;
+    font-weight: 700;
+    color: var(--color-texto-oscuro);
+    margin: 0;
+}
+
+.admin-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* Estilo de los botones */
+.btn {
+    padding: 8px 15px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: background-color 0.3s;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.admin-actions .btn {
+    background-color: var(--color-acento);
+    color: var(--color-texto-oscuro);
+    border: 1px solid var(--color-acento);
+}
+
+.admin-actions .btn:hover {
+    background-color: #fdd835;
+}
+
+.admin-actions .btn.ghost {
+    background: transparent;
+    color: var(--color-texto-oscuro);
+    border: 1px solid var(--color-texto-oscuro);
+}
+
+.admin-actions .btn.ghost:hover {
+    background-color: var(--color-texto-oscuro);
+    color: var(--color-fondo-tarjeta);
+}
+
+/* --- 2. Contenido Principal y Mensajes --- */
+.admin-main {
+    padding-bottom: 20px;
+}
+
+.alert {
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-align: center;
+}
+.alert-error {
+    background-color: #fee2e2;
+    border: 1px solid var(--color-danger);
+    color: var(--color-danger);
+}
+
+/* --- 3. Formulario (Tarjeta Blanca) --- */
+.card {
+    background-color: var(--color-fondo-tarjeta);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card form {
+    display: grid;
+    grid-template-columns: 1fr; /* Columna única por defecto */
+    gap: 20px;
+}
+
+/* Estilo para cada grupo de label/input */
+.card > div {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Campos de entrada */
+label {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: var(--color-texto-gris);
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"] {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1em;
+    color: var(--color-texto-oscuro);
+    transition: border-color 0.3s;
+}
+
+input:focus {
+    border-color: var(--color-acento);
+    outline: none;
+}
+
+/* Estilo específico para Checkbox (Es administrador) */
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-top: 5px;
+    align-self: flex-start; /* Alineado a la izquierda */
+}
+
+/* Ajuste para que la etiqueta del checkbox esté al lado o en línea */
+.card > div:nth-child(6) { /* Selector para el div que contiene 'Es administrador' */
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.card > div:nth-child(6) label {
+    margin-bottom: 0;
+    font-size: 1em;
+    color: var(--color-texto-oscuro);
+}
+
+
+/* --- 4. Botones de Acción dentro del Formulario --- */
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 15px;
+    grid-column: 1 / -1; /* Ocupa todo el ancho en el grid */
+}
+
+/* Botón principal (Guardar) */
+.actions .btn:not(.ghost) {
+    background-color: var(--color-acento);
+    color: var(--color-texto-oscuro);
+    border: 1px solid var(--color-acento);
+}
+
+/* Botón secundario (Cancelar) */
+.actions .btn.ghost {
+    background: transparent;
+    color: var(--color-texto-oscuro);
+    border: 1px solid #ccc;
+}
+.actions .btn.ghost:hover {
+    background-color: #f0f0f0;
+}
+
+/* --- 5. Pie de Página --- */
+.admin-footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #aaa;
+    color: var(--color-texto-gris);
+    font-size: 0.9em;
+}
+
+/* --- Responsive (Ajustes para Pantallas Medianas) --- */
+@media (min-width: 600px) {
+    /* Formulario de 2 columnas para mejor uso del espacio */
+    .card form {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    /* El campo Contraseña y la acción ocupan ambas columnas */
+    .card > div:nth-child(3),
+    .card > div:nth-child(6),
+    .card > div:nth-child(7), /* Saldo */
+    .actions {
+        grid-column: span 2;
+    }
+}

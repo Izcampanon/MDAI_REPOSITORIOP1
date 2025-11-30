@@ -1,125 +1,167 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8" />
     <title>Mis Entradas</title>
     <link rel="stylesheet" th:href="@{/styles/mis_entradas.css}" />
+    <link rel="stylesheet" th:href="@{/styles/index.css}" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
+
 <header class="site-header">
     <div class="container header-inner">
-        <div class="brand">EntradasApp</div>
+        <div class="brand">ENTRADA<span class="xpress-text">XPRESS</span></div>
         <nav class="main-nav">
             <a href="/" class="nav-link">Inicio</a>
-            <a href="/login" class="nav-link">Login</a>
-            <a href="/mis-entradas" class="nav-link">Mis entradas</a>
+            <a href="/mis-entradas" class="nav-link active">Mis entradas</a>
             <a href="/saldo" class="nav-link">Saldo</a>
-            <a href="/comprar" class="nav-link cta">Comprar entrada</a>
+            <a href="/comprar" class="nav-link">Compra Entradas</a>
+            <a href="/login" class="nav-link">Login</a>
+
+            <!-- Avatar con inicial del usuario y menú desplegable -->
+            <div th:if="${session.usuario != null}" class="user-menu">
+                <button class="avatar-btn" th:onclick="|document.getElementById('user-dropdown').classList.toggle('open')|">
+                    <span class="avatar-initial" th:text="${session.usuario.nombre != null && session.usuario.nombre.length() > 0 ? session.usuario.nombre.substring(0,1).toUpperCase() : 'U'}"></span>
+                </button>
+                <div id="user-dropdown" class="user-dropdown" th:attrappend="data-open=${false}">
+                    <div class="user-info">
+                        <div class="user-name" th:text="${session.usuario.nombre}"></div>
+                        <div class="user-email" th:text="${session.usuario.email}"></div>
+                    </div>
+                    <div class="user-actions">
+                        <a href="/logout" class="user-action">Cerrar sesión</a>
+                    </div>
+                </div>
+            </div>
+
         </nav>
     </div>
 </header>
 
-<main class="container main-content">
-    <h1>Mis Entradas</h1>
+<main class="main-content">
+    <div class="content-container">
 
-    <section>
-        <h2>Entradas disponibles</h2>
-        <div th:if="${entradasDisponibles == null || #lists.isEmpty(entradasDisponibles)}">
-            <p>No tienes entradas para eventos futuros.</p>
-        </div>
-        <div th:if="${entradasDisponibles != null && !#lists.isEmpty(entradasDisponibles)}">
-            <table class="entradas-table">
-                <thead>
-                <tr>
-                    <th>Evento</th>
-                    <th>Fecha</th>
-                    <th>Tipo</th>
-                    <th>Consumiciones</th>
-                    <th>Acciones</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="entrada : ${entradasDisponibles}">
-                    <td th:text="${entrada.nombre_evento != null && entrada.nombre_evento != '' ? entrada.nombre_evento : (entrada.evento != null ? entrada.evento.titulo : '—')}"></td>
-                    <td th:text="${entrada.evento != null ? #temporals.format(entrada.evento.fecha,'dd/MM/yyyy HH:mm') : '—'}"></td>
-                    <td th:text="${entrada.tipo}"></td>
-                    <td th:text="${entrada.cantidad_consumiciones}"></td>
-                    <td><a th:href="@{/entrada/{id}(id=${entrada.id})}">Ver</a></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
+        <h1 class="page-title">Mis Entradas</h1>
 
-    <section style="margin-top:24px;">
-        <h2>Entradas anteriores</h2>
-        <div th:if="${entradasAnteriores == null || #lists.isEmpty(entradasAnteriores)}">
-            <p>No tienes entradas de eventos pasados.</p>
-        </div>
-        <div th:if="${entradasAnteriores != null && !#lists.isEmpty(entradasAnteriores)}">
-            <table class="entradas-table">
-                <thead>
-                <tr>
-                    <th>Evento</th>
-                    <th>Fecha</th>
-                    <th>Tipo</th>
-                    <th>Consumiciones</th>
-                    <th>Acciones</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="entrada : ${entradasAnteriores}">
-                    <td th:text="${entrada.nombre_evento != null && entrada.nombre_evento != '' ? entrada.nombre_evento : (entrada.evento != null ? entrada.evento.titulo : '—')}"></td>
-                    <td th:text="${entrada.evento != null ? #temporals.format(entrada.evento.fecha,'dd/MM/yyyy HH:mm') : '—'}"></td>
-                    <td th:text="${entrada.tipo}"></td>
-                    <td th:text="${entrada.cantidad_consumiciones}"></td>
-                    <td><a th:href="@{/entrada/{id}(id=${entrada.id})}">Ver</a></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
+        <section class="ticket-section">
+            <h2 class="section-title">Entradas disponibles</h2>
 
-    <section style="margin-top:24px;">
-        <h2>Entradas no disponibles (devueltas)</h2>
-        <div th:if="${entradasDevueltas == null || #lists.isEmpty(entradasDevueltas)}">
-            <p>No tienes entradas devueltas.</p>
-        </div>
-        <div th:if="${entradasDevueltas != null && !#lists.isEmpty(entradasDevueltas)}">
-            <table class="entradas-table">
-                <thead>
-                <tr>
-                    <th>Evento</th>
-                    <th>Fecha</th>
-                    <th>Tipo</th>
-                    <th>Consumiciones</th>
-                    <th>Acciones</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="entrada : ${entradasDevueltas}">
-                    <td th:text="${entrada.nombre_evento != null && entrada.nombre_evento != '' ? entrada.nombre_evento : (entrada.evento != null ? entrada.evento.titulo : '—')}"></td>
-                    <td th:text="${entrada.evento != null ? #temporals.format(entrada.evento.fecha,'dd/MM/yyyy HH:mm') : '—'}"></td>
-                    <td th:text="${entrada.tipo}"></td>
-                    <td th:text="${entrada.cantidad_consumiciones}"></td>
-                    <td><a th:href="@{/entrada/{id}(id=${entrada.id})}">Ver</a></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
+            <div th:if="${entradasDisponibles == null || #lists.isEmpty(entradasDisponibles)}" class="empty-state">
+                <p>No tienes entradas para eventos futuros.</p>
+            </div>
 
-    <div class="actions" style="margin-top:20px;">
-        <a class="btn" href="/">Volver al inicio</a>
-        <a class="btn ghost" href="/comprar">Comprar más entradas</a>
+            <div th:if="${entradasDisponibles != null && !#lists.isEmpty(entradasDisponibles)}" class="ticket-list">
+
+                <div th:each="entrada : ${entradasDisponibles}" class="ticket-row available">
+                    <div class="ticket-info-group">
+                        <div class="ticket-date"
+                             th:text="${entrada.evento != null ? #temporals.format(entrada.evento.fecha,'dd MMM, HH:mm') : '—'}">
+                        </div>
+
+                        <div class="ticket-main">
+                            <span class="event-name"
+                                  th:text="${entrada.nombre_evento != null && entrada.nombre_evento != '' ? entrada.nombre_evento : (entrada.evento != null ? entrada.evento.titulo : '—')}">
+                            </span>
+                            <span class="separator">/</span>
+                            <span class="event-details">
+                                <span th:text="${entrada.tipo}"></span> -
+                                <span th:text="${entrada.cantidad_consumiciones} + ' Consumiciones'"></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="ticket-action">
+                        <a th:href="@{/entrada/{id}(id=${entrada.id})}" class="btn-ver">Ver Entrada</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="ticket-section mt-large">
+            <h2 class="section-title text-muted">Entradas anteriores</h2>
+
+            <div th:if="${entradasAnteriores == null || #lists.isEmpty(entradasAnteriores)}" class="empty-state">
+                <p>No tienes entradas de eventos pasados.</p>
+            </div>
+
+            <div th:if="${entradasAnteriores != null && !#lists.isEmpty(entradasAnteriores)}" class="ticket-list opacity-dim">
+                <div th:each="entrada : ${entradasAnteriores}" class="ticket-row past">
+                    <div class="ticket-info-group">
+                        <div class="ticket-date"
+                             th:text="${entrada.evento != null ? #temporals.format(entrada.evento.fecha,'dd/MM/yyyy') : '—'}">
+                        </div>
+                        <div class="ticket-main">
+                            <span class="event-name"
+                                  th:text="${entrada.nombre_evento != null && entrada.nombre_evento != '' ? entrada.nombre_evento : (entrada.evento != null ? entrada.evento.titulo : '—')}">
+                            </span>
+                            <span class="separator">/</span>
+                            <span class="event-details" th:text="${entrada.tipo}"></span>
+                        </div>
+                    </div>
+                    <div class="ticket-action">
+                        <a th:href="@{/entrada/{id}(id=${entrada.id})}" class="btn-ver btn-ghost">Ver</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="ticket-section mt-large">
+            <h2 class="section-title text-muted">Entradas devueltas</h2>
+
+            <div th:if="${entradasDevueltas == null || #lists.isEmpty(entradasDevueltas)}" class="empty-state">
+                <p>No tienes entradas devueltas.</p>
+            </div>
+
+            <div th:if="${entradasDevueltas != null && !#lists.isEmpty(entradasDevueltas)}" class="ticket-list">
+                <div th:each="entrada : ${entradasDevueltas}" class="ticket-row returned">
+                    <div class="ticket-info-group">
+                        <div class="ticket-date"
+                             th:text="${entrada.evento != null ? #temporals.format(entrada.evento.fecha,'dd/MM/yyyy') : '—'}">
+                        </div>
+                        <div class="ticket-main">
+                            <span class="event-name" style="text-decoration: line-through; color: #777;"
+                                  th:text="${entrada.nombre_evento != null && entrada.nombre_evento != '' ? entrada.nombre_evento : (entrada.evento != null ? entrada.evento.titulo : '—')}">
+                            </span>
+                            <span class="event-details" style="color:#d32f2f;">DEVUELTA</span>
+                        </div>
+                    </div>
+                    <div class="ticket-action">
+                        <span class="status-badge error">Cancelada</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="actions-footer">
+            <a class="btn-link-yellow" href="/">← Volver al inicio</a>
+            <a class="btn-primary" href="/comprar">Comprar más entradas</a>
+        </div>
     </div>
 </main>
 
 <footer class="site-footer">
-    <div class="container">
+    <div class="container text-center">
         <p>&copy; 2025 EntradasApp</p>
     </div>
 </footer>
 
+<script>
+  // Cerrar dropdown al hacer click fuera
+  document.addEventListener('click', function(event) {
+    var dropdown = document.getElementById('user-dropdown');
+    var btn = document.querySelector('.avatar-btn');
+    if (!dropdown) return;
+    if (btn && btn.contains(event.target)) return; // si clic en el botón, no cerrar (toggle ya lo hace)
+    if (!dropdown.contains(event.target)) {
+      dropdown.classList.remove('open');
+    }
+  });
+
+  // Cerrar dropdown al cambiar de página
+  window.addEventListener('beforeunload', function() {
+    var dropdown = document.getElementById('user-dropdown');
+    if (dropdown) dropdown.classList.remove('open');
+  });
+</script>
 </body>
 </html>

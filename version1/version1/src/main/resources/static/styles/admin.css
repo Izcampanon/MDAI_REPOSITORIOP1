@@ -1,20 +1,246 @@
-/* Estilos para el panel de administración */
-:root{--bg:#eef2ff;--card:#ffffff;--accent:#2b6ef6;--muted:#6b7280}
-html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial;background:var(--bg)}
-.admin-wrap{max-width:1100px;margin:24px auto;padding:18px}
-.admin-header{padding:12px 0}
-.admin-header h1{margin:0;color:var(--accent)}
-.admin-nav{margin:18px 0}
-.admin-nav ul{list-style:none;padding:0;display:flex;gap:12px}
-.admin-nav a{text-decoration:none;padding:10px 14px;border-radius:8px;background:#fff;border:1px solid rgba(15,23,42,0.04);color:var(--muted);font-weight:600}
-.admin-main{display:flex;gap:18px}
-.admin-card{flex:1;background:var(--card);padding:18px;border-radius:10px;box-shadow:0 10px 30px rgba(15,23,42,0.06)}
-.admin-footer{margin-top:18px;text-align:right}
-label{display:block;margin-top:10px;color:var(--muted)}
-input,select,textarea{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid rgba(15,23,42,0.06);background:#fbfdff}
-button{margin-top:12px;padding:10px 12px;border-radius:8px;border:none;background:linear-gradient(180deg,var(--accent),#2357d6);color:#fff;font-weight:700}
-@media (max-width:768px){.admin-nav ul{flex-direction:column}}
+/* Import Poppins font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;900&display=swap');
 
-/* Mensajes */
-.error{color:#b91c1c;background:#fff5f5;border:1px solid #fecaca;padding:10px;border-radius:6px;margin:12px 0}
-.success{color:#065f46;background:#ecfdf5;border:1px solid #bbf7d0;padding:10px;border-radius:6px;margin:12px 0}
+/* Variables consistentes (Amarillo: #ffee58) */
+:root {
+  --accent-yellow: #ffee58;
+  --accent-yellow-dark: #fdd835;
+  --text-light: #ffffff;
+  --text-dark: #000000;
+  --header-bg: rgba(0, 0, 0, 0.85); /* Fondo de cabecera semi-transparente oscuro */
+  --bg-light: #f4f4f4; /* Fondo claro para el cuerpo principal */
+  --bg-main-content: #ffffff; /* Fondo blanco para las tarjetas */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg-light); /* Fondo claro para la página de administración */
+    padding-top: 75px; /* Espacio para el header fijo */
+    color: var(--text-dark);
+}
+
+/* -------------------------------------------------------------------------------- */
+/* 1. ESTILOS DEL HEADER (COPIADOS DE index.css) */
+/* -------------------------------------------------------------------------------- */
+
+.site-header {
+  background: var(--header-bg);
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 25px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.brand {
+  font-weight: 900;
+  font-size: 28px;
+  color: var(--text-light);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border: 3px solid var(--accent-yellow);
+  padding: 5px 10px;
+  line-height: 1;
+}
+
+.brand .xpress-text {
+  color: var(--accent-yellow);
+}
+
+.main-nav {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+
+.nav-link {
+  color: var(--text-light);
+  text-decoration: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  font-weight: 400;
+  font-size: 16px;
+  text-transform: uppercase;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-link:hover {
+  background: var(--accent-yellow);
+  color: var(--text-dark);
+}
+
+/* Estilo para el enlace activo/actual (Admin) */
+.nav-link.admin-active {
+    background-color: var(--accent-yellow);
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+/* -------------------------------------------------------------------------------- */
+/* 2. ESTILOS ESPECÍFICOS DEL PANEL DE ADMINISTRACIÓN */
+/* -------------------------------------------------------------------------------- */
+
+.admin-wrap {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.page-title {
+    font-size: 2.5em;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 30px;
+    color: var(--text-dark);
+    text-transform: uppercase;
+}
+
+/* --- Navegación de Acciones Rápidas (Botones) --- */
+.admin-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 40px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.admin-nav li {
+    flex-grow: 1;
+}
+
+.nav-btn {
+    display: block;
+    text-decoration: none;
+    text-align: center;
+    padding: 15px 20px;
+    font-weight: 700;
+    font-size: 1.05em;
+    border-radius: 4px;
+    text-transform: uppercase;
+    transition: opacity 0.3s;
+    min-width: 180px;
+}
+
+/* Botones amarillos (Introducir datos) */
+.nav-btn.btn-yellow {
+    background-color: var(--accent-yellow);
+    color: var(--text-dark);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.nav-btn.btn-yellow:hover {
+    background-color: var(--accent-yellow-dark);
+}
+
+
+/* --- Contenido Principal y Tarjeta --- */
+.section-title {
+    font-size: 1.3em;
+    font-weight: 700;
+    color: var(--text-dark);
+    border-bottom: 2px solid var(--accent-yellow);
+    padding-bottom: 5px;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+.admin-card {
+    background-color: var(--bg-main-content);
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Mensajes de Feedback (Consistencia con otros formularios) --- */
+.error, .success {
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: bold;
+}
+.error {
+    background-color: #fee2e2;
+    border: 1px solid #b91c1c;
+    color: #b91c1c;
+}
+.success {
+    background-color: #d1fae5;
+    border: 1px solid #059669;
+    color: #059669;
+}
+
+
+/* --- Pie de Página --- */
+.admin-footer {
+    text-align: center;
+    margin-top: 50px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+}
+
+.admin-footer a {
+    color: var(--text-dark);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 8px 15px;
+    border: 1px solid #555;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.admin-footer a:hover {
+    background-color: #555;
+    color: var(--text-light);
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    body {
+        padding-top: 100px;
+    }
+    .header-inner {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px 15px;
+    }
+    .main-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+    .nav-link {
+        font-size: 14px;
+        padding: 6px 10px;
+    }
+    .brand {
+        font-size: 24px;
+    }
+    .admin-nav ul {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .nav-btn {
+        min-width: unset;
+        width: 100%;
+    }
+}

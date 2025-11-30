@@ -1,105 +1,223 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 
 <head>
     <meta charset="UTF-8" />
-    <title>Página de Bienvenida</title>
+    <title>ENTRADA XPRESS - Vive Momentos Inolvidables</title>
     <link rel="stylesheet" th:href="@{/styles/index.css}" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- Estilos movidos a /styles/index.css -->
 </head>
 
 <body>
 <header class="site-header">
     <div class="container header-inner">
-        <div class="brand">ENTRADAXPRESS</div>
+        <div class="brand">ENTRADA<span class="xpress-text">XPRESS</span></div>
         <nav class="main-nav">
             <a href="/" class="nav-link">Inicio</a>
-            <a href="/login" class="nav-link">Login</a>
             <a href="/mis-entradas" class="nav-link">Mis entradas</a>
             <a href="/saldo" class="nav-link">Saldo</a>
-            <a href="/comprar" class="nav-link cta">Comprar entrada</a>
+            <a href="/comprar" class="nav-link">Compra Entradas</a>
+            <a href="/login" class="nav-link">Login</a>
+
+            <!-- Avatar con inicial del usuario y menú desplegable -->
+            <div th:if="${session.usuario != null}" class="user-menu">
+                <button class="avatar-btn" th:onclick="|document.getElementById('user-dropdown').classList.toggle('open')|">
+                    <span class="avatar-initial" th:text="${session.usuario.nombre != null && session.usuario.nombre.length() > 0 ? session.usuario.nombre.substring(0,1).toUpperCase() : 'U'}"></span>
+                </button>
+                <div id="user-dropdown" class="user-dropdown" th:attrappend="data-open=${false}">
+                    <div class="user-info">
+                        <div class="user-name" th:text="${session.usuario.nombre}"></div>
+                        <div class="user-email" th:text="${session.usuario.email}"></div>
+                    </div>
+                    <div class="user-actions">
+                        <a href="/logout" class="user-action">Cerrar sesión</a>
+                    </div>
+                </div>
+            </div>
+
         </nav>
     </div>
 </header>
 
-<main class="container main-content">
-    <section class="hero">
-        <h1>Bienvenido a EntradasApp</h1>
-        <p>Compra y gestiona tus entradas de forma fácil y rápida.</p>
-        <div class="hero-actions">
-            <a class="btn" href="/comprar">Comprar entrada</a>
-            <a class="btn ghost" href="/mis-entradas">Ver mis entradas</a>
-            <!-- Nuevo botón para recomendaciones -->
-            <button id="btnRecomendar" class="btn" type="button">Recomendaciones</button>
-        </div>
-    </section>
+<main class="main-content hero-full-screen">
+    <div class="hero-overlay"></div> <section class="container hero-content">
+    <h1>VEN A CREAR<br>MOMENTOS<br>INOLVIDABLES</h1>
+    <div class="hero-actions">
+        <a class="btn primary-btn" href="/comprar">Comprar Entrada</a>
+    </div>
+</section>
 
-    <section class="features">
-        <div class="feature">
-            <h3>Acceso rápido</h3>
-            <p>Inicia sesión para ver tus compras y datos personales.</p>
-        </div>
-        <div class="feature">
-            <h3>Entradas disponibles</h3>
-            <p>Navega entre eventos y compra la entrada que más te guste.</p>
-        </div>
-        <div class="feature">
-            <h3>Gestión sencilla</h3>
-            <p>Consulta y descarga tus entradas desde tu perfil.</p>
-        </div>
-    </section>
+<!-- REEMPLAZADO: la sección original de recomendaciones se transforma en un sidebar derecho colapsable -->
 
-    <!-- Panel de recomendaciones / chat -->
-    <section id="recomendacionPanel" class="reco-panel" style="display:none; margin-top:20px;">
-        <h2>Recomendaciones</h2>
-        <div>
-            <label for="prefs">Dime tus preferencias (género, artista, palabra clave):</label>
-            <input id="prefs" type="text" placeholder="Ej. rock, pop, jazz..." style="width:60%; padding:6px" />
-            <button id="sendPrefs" class="btn" type="button">Pedir recomendaciones</button>
-            <button id="closeReco" class="btn ghost" type="button">Cerrar</button>
+<!-- Botón lateral para abrir/cerrar (visible si hay usuario en sesión) -->
+<div th:if="${session.usuario != null}">
+    <button id="reco-toggle-btn" class="reco-toggle-btn" aria-expanded="false" aria-controls="reco-sidebar">Recomendaciones ▸</button>
+
+    <aside id="reco-sidebar" class="reco-sidebar" aria-hidden="true">
+        <div class="reco-header">
+            <h3>Recomendaciones</h3>
+            <button id="reco-close-btn" class="reco-close-btn" aria-label="Cerrar recomendaciones">✕</button>
         </div>
-        <div id="recoResult" style="white-space:pre-wrap; margin-top:12px; padding:12px; border:1px solid #e5e7eb; background:#fff;"></div>
-    </section>
+
+        <div class="reco-body" id="recomendaciones-list">
+            <!-- Mensajes del chat: inicialmente vacíos -->
+            <div class="chat-empty">Introduce una palabra y pulsa Buscar para recibir recomendaciones.</div>
+        </div>
+
+        <div class="reco-input">
+            <input id="reco-keyword" type="text" placeholder="Escribe una palabra (ej: rock, teatro)" aria-label="buscar recomendaciones" />
+            <button id="reco-search-btn" class="btn primary-btn" type="button">Buscar</button>
+        </div>
+    </aside>
+
+    <div id="reco-overlay" class="reco-overlay" aria-hidden="true"></div>
+</div>
 
 </main>
 
-<footer class="site-footer">
-    <div class="container">
-        <p>&copy; 2025 EntradasApp. Todos los derechos reservados.</p>
-    </div>
-</footer>
-
 <script>
-    // Manejo básico del panel y llamada AJAX (fetch)
-    document.getElementById('btnRecomendar').addEventListener('click', function() {
-        document.getElementById('recomendacionPanel').style.display = 'block';
-        document.getElementById('recoResult').textContent = 'Cargando...';
-    });
+  // Cerrar dropdown al hacer click fuera
+  document.addEventListener('click', function(event) {
+    var dropdown = document.getElementById('user-dropdown');
+    var btn = document.querySelector('.avatar-btn');
+    if (!dropdown) return;
+    if (btn && btn.contains(event.target)) return; // si clic en el botón, no cerrar (toggle ya lo hace)
+    if (!dropdown.contains(event.target)) {
+      dropdown.classList.remove('open');
+    }
+  });
 
-    document.getElementById('closeReco').addEventListener('click', function() {
-        document.getElementById('recomendacionPanel').style.display = 'none';
-    });
+  // Cerrar dropdown al cambiar de página
+  window.addEventListener('beforeunload', function() {
+    var dropdown = document.getElementById('user-dropdown');
+    if (dropdown) dropdown.classList.remove('open');
+  });
 
-    document.getElementById('sendPrefs').addEventListener('click', function() {
-        const prefs = document.getElementById('prefs').value || '';
-        const resultDiv = document.getElementById('recoResult');
-        resultDiv.textContent = 'Solicitando recomendaciones...';
+  // Añadimos utilidades para render chat messages
+  function appendBotMessage(container, text) {
+    const msg = document.createElement('div');
+    msg.className = 'chat-msg bot';
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble';
+    bubble.textContent = text;
+    msg.appendChild(bubble);
+    container.appendChild(msg);
+    container.scrollTop = container.scrollHeight;
+  }
 
-        fetch('/recomendaciones', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ preferencias: prefs })
-        })
-        .then(resp => {
-            if (!resp.ok) throw new Error('Error en la petición: ' + resp.status);
-            return resp.json();
-        })
-        .then(data => {
-            resultDiv.textContent = data.recomendaciones || 'No hay recomendaciones.';
-        })
-        .catch(err => {
-            resultDiv.textContent = 'Se produjo un error al obtener las recomendaciones: ' + err.message;
+  function appendUserMessage(container, text) {
+    const msg = document.createElement('div');
+    msg.className = 'chat-msg user';
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble';
+    bubble.textContent = text;
+    msg.appendChild(bubble);
+    container.appendChild(msg);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  // Buscar recomendaciones por palabra clave (usa el servicio que devuelve texto + eventos)
+  async function searchRecommendations(keyword) {
+    const container = document.getElementById('recomendaciones-list');
+    if (!keyword || keyword.trim().length === 0) {
+      // mostrar un mensaje del usuario y respuesta del bot
+      appendUserMessage(container, '');
+      appendBotMessage(container, 'Por favor, introduce una palabra para buscar.');
+      return;
+    }
+
+    // mostrar mensaje del usuario
+    appendUserMessage(container, keyword);
+    // mostrar indicador de carga del bot
+    const loading = document.createElement('div');
+    loading.className = 'chat-msg bot loading';
+    loading.innerHTML = '<div class="chat-bubble">Buscando...</div>';
+    container.appendChild(loading);
+    container.scrollTop = container.scrollHeight;
+
+    try {
+      const res = await fetch('/api/recomendaciones/search?q=' + encodeURIComponent(keyword));
+      // quitar loading
+      loading.remove();
+      if (!res.ok) throw new Error('Error en la petición');
+      const data = await res.json();
+
+      // mostrar texto de recomendaciones (si viene)
+      if (data && data.recomendaciones) {
+        appendBotMessage(container, data.recomendaciones);
+      }
+
+      // mostrar eventos relacionados como mensajes separados (si hay)
+      const eventos = (data && data.eventos) ? data.eventos : [];
+      // Mostrar como mucho 2 eventos
+      const eventosToShow = eventos.slice(0, 2);
+      if (eventosToShow.length > 0) {
+        eventosToShow.forEach(ev => {
+          const text = (ev.title ? ev.title : '') + (ev.when ? ' — ' + ev.when : '') + (ev.location ? ' • ' + ev.location : '');
+          appendBotMessage(container, text);
         });
-    });
+        if (eventos.length > eventosToShow.length) {
+          appendBotMessage(container, `Se han mostrado ${eventosToShow.length} de ${eventos.length} eventos relacionados.`);
+        }
+      }
+
+    } catch (err) {
+      // quitar loading si sigue
+      if (loading && loading.remove) loading.remove();
+      appendBotMessage(container, 'Error al buscar recomendaciones: ' + (err.message || ''));
+    }
+  }
+
+  // Toggle del sidebar y gestión del overlay
+  function openRecoSidebar() {
+    const sb = document.getElementById('reco-sidebar');
+    const overlay = document.getElementById('reco-overlay');
+    const toggle = document.getElementById('reco-toggle-btn');
+    if (!sb) return;
+    sb.classList.add('open');
+    sb.setAttribute('aria-hidden','false');
+    if (overlay) overlay.classList.add('visible');
+    if (toggle) toggle.setAttribute('aria-expanded','true');
+  }
+  function closeRecoSidebar() {
+    const sb = document.getElementById('reco-sidebar');
+    const overlay = document.getElementById('reco-overlay');
+    const toggle = document.getElementById('reco-toggle-btn');
+    if (!sb) return;
+    sb.classList.remove('open');
+    sb.setAttribute('aria-hidden','true');
+    if (overlay) overlay.classList.remove('visible');
+    if (toggle) toggle.setAttribute('aria-expanded','false');
+  }
+
+  // Manejar el formulario y el botón
+  document.addEventListener('DOMContentLoaded', function() {
+    const btn = document.getElementById('reco-search-btn');
+    const input = document.getElementById('reco-keyword');
+    if (btn && input) {
+      btn.addEventListener('click', () => { searchRecommendations(input.value); input.value = ''; });
+      input.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); searchRecommendations(input.value); input.value = ''; } });
+    }
+
+    // Toggle open/close
+    const toggle = document.getElementById('reco-toggle-btn');
+    const closeBtn = document.getElementById('reco-close-btn');
+    const overlay = document.getElementById('reco-overlay');
+    if (toggle) {
+      toggle.addEventListener('click', function() {
+        const sb = document.getElementById('reco-sidebar');
+        if (sb && sb.classList.contains('open')) { closeRecoSidebar(); } else { openRecoSidebar(); }
+      });
+    }
+    if (closeBtn) closeBtn.addEventListener('click', closeRecoSidebar);
+    if (overlay) overlay.addEventListener('click', closeRecoSidebar);
+
+    // Cerrar sidebar con Escape
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeRecoSidebar(); });
+  });
+
 </script>
 
 </body>

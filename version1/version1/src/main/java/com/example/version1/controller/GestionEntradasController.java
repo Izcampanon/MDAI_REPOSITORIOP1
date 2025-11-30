@@ -110,6 +110,22 @@ public class GestionEntradasController {
         Compra_Entrada compra = optCompra.get();
         model.addAttribute("compra", compra);
         model.addAttribute("entrada", entrada);
+
+        // Calcular si la entrada puede devolverse: no devuelta y evento futuro/igual a ahora
+        boolean puedeDevolver = false;
+        LocalDateTime ahora = LocalDateTime.now();
+        try {
+            if (!entrada.isDevuelta() && entrada.getEvento() != null && entrada.getEvento().getFecha() != null) {
+                LocalDateTime fechaEvento = entrada.getEvento().getFecha();
+                if (fechaEvento.isAfter(ahora) || fechaEvento.isEqual(ahora)) {
+                    puedeDevolver = true;
+                }
+            }
+        } catch (Exception ex) {
+            // En caso de problemas de lazy loading u otros, no permitir la devolución desde UI
+            puedeDevolver = false;
+        }
+        model.addAttribute("puedeDevolver", puedeDevolver);
         model.addAttribute("usuario", usuario);
         return "entrada_detalle";
     }

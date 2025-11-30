@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8" />
     <title>Detalle de la compra</title>
-    <link rel="stylesheet" th:href="@{/styles/mis_entradas.css}" />
+    <link rel="stylesheet" th:href="@{/styles/entrada.css}" />
 </head>
 <body>
 <div class="container">
@@ -14,45 +14,60 @@
 
     <div th:if="${compra == null}">
         <p>No se encontró la información de compra.</p>
-        <a th:href="@{/mis-entradas}" class="btn">Volver</a>
+        <a th:href="@{/mis-entradas}" class="btn ghost">Volver</a>
     </div>
 
-    <div th:if="${compra != null}">
-        <h2>Datos de la compra</h2>
-        <p><strong>Fecha de compra:</strong> <span th:text="${#dates.format(compra.fechaCompra, 'dd/MM/yyyy HH:mm')}"></span></p>
-        <p><strong>Importe restante en la compra:</strong> <span th:text="${compra.precio}"></span> €</p>
+    <div th:if="${compra != null}" class="detalle-flex">
 
-        <h3>Entradas en esta compra</h3>
-        <table class="entradas-table">
-            <thead>
-            <tr>
-                <th>Evento</th>
-                <th>Tipo</th>
-                <th>Consumiciones</th>
-                <th>Estado</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="e : ${compra.tipo_entradas}">
-                <td th:text="${e.nombre_evento}"></td>
-                <td th:text="${e.tipo}"></td>
-                <td th:text="${e.cantidad_consumiciones}"></td>
-                <td th:text="${e.devuelta ? 'Devuelta' : 'Activa'}"></td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="columna-info">
+            <h2>Datos de la compra</h2>
+            <p><strong>Fecha de compra:</strong> <span th:text="${#dates.format(compra.fechaCompra, 'dd/MM/yyyy HH:mm')}"></span></p>
+            <p><strong>Importe restante:</strong> <span th:text="${compra.precio}"></span> €</p>
 
-        <div style="margin-top:16px;">
-            <!-- Botón para devolver la entrada actual (la que abrió el detalle) -->
-            <form th:action="@{/entrada/{id}/devolver(id=${entrada.id})}" method="post">
-                <button type="submit" class="btn" th:if="${!entrada.devuelta}">Devolver esta entrada</button>
-                <span th:if="${entrada.devuelta}" style="color:#666;">Esta entrada ya ha sido devuelta.</span>
-            </form>
+            <h3>Entradas en esta compra</h3>
+            <table class="entradas-table">
+                <thead>
+                <tr>
+                    <th>Evento</th>
+                    <th>Tipo</th>
+                    <th>Consumiciones</th>
+                    <th>Estado</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="e : ${compra.tipo_entradas}">
+                    <td th:text="${e.nombre_evento}"></td>
+                    <td th:text="${e.tipo}"></td>
+                    <td th:text="${e.cantidad_consumiciones}"></td>
+                    <td th:text="${e.devuelta ? 'Devuelta' : 'Activa'}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div style="margin-top:24px;">
+                <div th:if="${puedeDevolver}">
+                    <form th:action="@{/entrada/{id}/devolver(id=${entrada.id})}" method="post">
+                        <button type="submit" class="btn">Devolver esta entrada</button>
+                    </form>
+                </div>
+                <div th:if="${!puedeDevolver}">
+                    <span th:if="${entrada.devuelta}" style="color:#666;">Esta entrada ya ha sido devuelta.</span>
+                    <span th:if="${!entrada.devuelta}" style="color:#666;">No es posible devolver esta entrada (evento pasado o condiciones no permitidas).</span>
+                </div>
+            </div>
+
+            <div style="margin-top:16px;">
+                <a th:href="@{/mis-entradas}" class="btn ghost">Volver a Mis Entradas</a>
+            </div>
         </div>
 
-        <div style="margin-top:16px;">
-            <a th:href="@{/mis-entradas}" class="btn ghost">Volver a Mis Entradas</a>
+        <div class="columna-qr">
+            <div class="qr-box">
+                <img src="https://api.qrcodecreator.com/v1/editor/design/qr-code-svg?lang=es" alt="Código QR de la entrada">
+                <p>Muestra este código en la entrada</p>
+            </div>
         </div>
+
     </div>
 </div>
 </body>

@@ -1,13 +1,251 @@
-/* Estilos mínimos para la página de compra por ubicación */
-.compra-wrap { max-width:900px; margin:36px auto; padding:16px; font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial; }
-.compra-wrap header h1 { margin:0 0 12px 0; color:#1f2937; }
-.buscar { background:#fff; padding:16px; border-radius:8px; box-shadow:0 6px 18px rgba(15,23,42,0.06); margin-bottom:18px }
-.buscar label { display:block; margin-bottom:6px; color:#374151 }
-.buscar input[type="text"] { width:100%; padding:10px 12px; border-radius:8px; border:1px solid #e5e7eb }
-.buscar button { margin-top:10px; padding:10px 14px; background:#2563eb; color:#fff; border-radius:8px; border:none }
-.resultados ul { list-style:none; padding:0 }
-.resultados li { background:#fff; margin-bottom:8px; padding:12px; border-radius:8px; border:1px solid #e6e9ef }
-.error { color:#b91c1c; margin-bottom:8px }
-.info { color:#064e3b; margin-bottom:8px }
-footer a { color:#2563eb }
+/* Variables de color para fácil mantenimiento */
+:root {
+    --color-fondo: #000000;
+    --color-texto-principal: #ffffff;
+    --color-acento: #ffee58; /* Amarillo estandarizado */
+    --color-error: #ff4d4d;
+    --color-info: #4dff4d;
+    --fuente-principal: 'Arial', sans-serif;
+}
 
+/* --- Base --- */
+body {
+    /*background-color: var(--color-fondo);*/
+    background-image: url('https://modofestival.es/wp-content/uploads/2025/04/fantastic-festival-castellon-2025-1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+
+    color: var(--color-texto-principal);
+    font-family: var(--fuente-principal);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Alinea al inicio del viewport */
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.compra-wrap {
+    width: 100%;
+    max-width: 800px; /* Ancho máximo para el contenido central */
+    padding: 30px;
+    background-color: #1a1a1a; /* Un gris muy oscuro para el contenedor */
+    box-shadow: 0 0 20px rgba(255,238,88,0.2); /* Sutil brillo amarillo (coincide con #ffee58) */
+    border-radius: 8px;
+}
+
+/* --- Cabecera --- */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    color: #ffee58;
+    font-size: 2.5em;
+    border-bottom: 3px solid #ffee58;
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+/* --- Mensajes de Error/Info --- */
+.error, .info {
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.error {
+    background-color: rgba(255, 77, 77, 0.2);
+    color: var(--color-error);
+    border: 1px solid var(--color-error);
+}
+
+.info {
+    background-color: rgb(255 117 77 / 54%);
+    color: #732121;
+    border: 1px solid #f90101;
+}
+
+/* --- Secciones Principales --- */
+main section {
+    padding: 20px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #333;
+}
+
+main section:last-of-type {
+    border-bottom: none;
+}
+
+h2 {
+    color: var(--color-acento);
+    font-size: 1.5em;
+    margin-bottom: 15px;
+}
+
+/* --- Formularios y Controles (Buscar) --- */
+.buscar form {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.buscar label {
+    font-weight: bold;
+    white-space: nowrap; /* Evita que el texto de la etiqueta se rompa */
+}
+
+input[type="text"] {
+    flex-grow: 1;
+    padding: 10px;
+    border: 2px solid var(--color-acento);
+    border-radius: 4px;
+    background-color: #000000;
+    color: var(--color-texto-principal);
+    font-size: 1em;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus {
+    border-color:#ffee58;
+}
+
+/* --- Botones --- */
+button[type="submit"], .btn {
+    background-color: #ffee58;
+    color: var(--color-fondo);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    text-decoration: none; /* Para el .btn usado en <a> */
+    text-align: center;
+    display: inline-block;
+}
+
+button[type="submit"]:hover, .btn:hover {
+    background-color: #e6c200; /* Un tono un poco más oscuro al pasar el ratón */
+}
+
+button[type="submit"]:active, .btn:active {
+    transform: translateY(1px);
+}
+
+/* Estilos para el botón deshabilitado/no disponible (si es necesario) */
+button[type="submit"]:disabled {
+    background-color: #555;
+    color: #999;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* --- Resultados (Locales) --- */
+.resultados ul, .eventos ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+}
+
+.resultados li, .eventos li {
+    padding: 15px;
+    margin-bottom: 10px;
+    background-color: #222;
+    border-left: 5px solid var(--color-acento);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+.resultados li strong {
+    font-size: 1.1em;
+    color: var(--color-acento);
+}
+
+.resultados li a.btn {
+    align-self: flex-end;
+    margin-top: 10px;
+    padding: 8px 15px;
+    font-size: 0.9em;
+}
+
+/* Mensaje de no resultados */
+.resultados div:not(:has(ul)), .eventos div:not(:has(ul)) {
+    font-style: italic;
+    color: #aaa;
+    margin-top: 10px;
+}
+
+/* --- Eventos --- */
+.eventos li div {
+    margin-top: 5px;
+}
+
+.eventos li small {
+    color: #ccc;
+}
+
+.eventos li strong {
+    color: var(--color-texto-principal);
+    font-size: 1.2em;
+}
+
+.eventos li div:last-child {
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+/* Estilo para el mensaje de inicio de sesión */
+.eventos li form div {
+    color: var(--color-error);
+    font-style: italic;
+    font-size: 0.9em;
+    margin-top: 8px;
+}
+
+/* --- Pie de Página --- */
+footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #333;
+}
+
+footer a {
+    color: #ffee58;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: 1px solid #ffee58;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+footer a:hover {
+    background-color: var(--color-acento);
+    color: var(--color-fondo);
+}
+
+/* --- Responsive (ajustes menores para móviles) --- */
+@media (max-width: 600px) {
+    .compra-wrap {
+        padding: 20px;
+    }
+
+    .buscar form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .resultados li a.btn {
+        align-self: stretch;
+    }
+}

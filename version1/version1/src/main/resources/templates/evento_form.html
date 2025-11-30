@@ -3,67 +3,65 @@
 <head>
     <meta charset="UTF-8" />
     <title>Nuevo Evento</title>
-    <link rel="stylesheet" th:href="@{/styles/admin.css}" />
+    <link rel="stylesheet" th:href="@{/styles/formularios.css}" />
 </head>
 <body>
-<div class="admin-wrap">
-    <header class="admin-header">
-        <h1>Crear Evento</h1>
-    </header>
+<div class="wrap">
+    <div class="card">
+        <h2>Crear Evento</h2>
 
-    <div th:if="${error}" class="error" th:text="${error}"></div>
-    <div th:if="${success}" class="success" th:text="${success}"></div>
+        <div th:if="${error}" class="error" th:text="${error}"></div>
+        <div th:if="${success}" class="success" th:text="${success}"></div>
 
-    <main class="admin-main">
-        <div class="admin-card">
-            <form th:action="@{/admin/evento/new}" th:object="${evento}" method="post">
-                <label for="titulo">Título</label>
-                <input type="text" id="titulo" th:field="*{titulo}" required />
+        <form th:action="@{/admin/evento/new}" th:object="${evento}" method="post">
+            <label for="titulo">Título</label>
+            <input type="text" id="titulo" th:field="*{titulo}" required />
 
-                <label for="fecha">Fecha y hora</label>
-                <input type="datetime-local" id="fecha" th:field="*{fecha}" required />
+            <label for="fecha">Fecha y hora</label>
+            <input type="datetime-local" id="fecha" th:field="*{fecha}" required />
 
-                <label for="artista">Artista</label>
-                <input type="text" id="artista" th:field="*{artista}" />
+            <label for="artista">Artista</label>
+            <input type="text" id="artista" th:field="*{artista}" />
 
-                <label for="direccion">Dirección</label>
-                <input type="text" id="direccion" th:field="*{direccion}" />
+            <label for="direccion">Dirección</label>
+            <input type="text" id="direccion" th:field="*{direccion}" />
 
-                <label for="descripcion">Descripción</label>
-                <textarea id="descripcion" th:field="*{descripcion}"></textarea>
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion" th:field="*{descripcion}"></textarea>
 
-                <label for="aforo">Aforo</label>
-                <input type="number" id="aforo" th:field="*{aforo}" min="0" />
+            <label for="aforo">Aforo</label>
+            <input type="number" id="aforo" th:field="*{aforo}" min="0" />
 
-                <label for="edadpermitida">Edad mínima</label>
-                <input type="number" id="edadpermitida" th:field="*{edadpermitida}" min="0" />
+            <label for="edadpermitida">Edad mínima</label>
+            <input type="number" id="edadpermitida" th:field="*{edadpermitida}" min="0" />
 
-                <label for="estado">Disponible</label>
-                <input type="checkbox" id="estado" th:field="*{estado}" />
+            <label for="estado">Disponible</label>
+            <input type="checkbox" id="estado" th:field="*{estado}" />
 
-                <label for="precioGeneral">Precio General (€)</label>
-                <input type="number" id="precioGeneral" th:field="*{precioGeneral}" min="0" step="0.01" />
+            <label for="precioGeneral">Precio General (€)</label>
+            <input type="number" id="precioGeneral" th:field="*{precioGeneral}" min="0" step="0.01" />
 
-                <label for="precioVip">Precio VIP (€)</label>
-                <input type="number" id="precioVip" th:field="*{precioVip}" min="0" step="0.01" />
+            <label for="precioVip">Precio VIP (€)</label>
+            <input type="number" id="precioVip" th:field="*{precioVip}" min="0" step="0.01" />
 
-                <label for="precioConsumicion">Precio por consumición (€)</label>
-                <input type="number" id="precioConsumicion" th:field="*{precioConsumicion}" min="0" step="0.01" />
+            <label for="precioConsumicion">Precio por consumición (€)</label>
+            <input type="number" id="precioConsumicion" th:field="*{precioConsumicion}" min="0" step="0.01" />
 
-                <label for="local">Local</label>
-                <select id="local" name="localId">
-                    <option value="" th:if="${locales == null or #lists.isEmpty(locales)}">-- Sin locales --</option>
-                    <option th:each="l : ${locales}" th:value="${l.id}" th:text="${l.nombre}"></option>
-                </select>
+            <label for="local">Local</label>
+            <select id="local" name="localId">
+                <option value="" th:if="${locales == null or #lists.isEmpty(locales)}">-- Sin locales --</option>
+                <option th:each="l : ${locales}" th:value="${l.id}" th:text="${l.nombre}"></option>
+            </select>
 
-                <button type="submit">Crear evento</button>
-            </form>
-        </div>
-    </main>
+            <button type="submit">Crear evento</button>
+        </form>
+
+    </div>
 
     <footer class="admin-footer">
         <a th:href="@{/admin}">Volver al panel</a>
     </footer>
+
 </div>
 </body>
 </html>
