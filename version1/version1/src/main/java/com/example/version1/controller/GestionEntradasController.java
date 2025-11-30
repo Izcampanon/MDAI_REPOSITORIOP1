@@ -4,6 +4,7 @@ import com.example.version1.model.Compra_Entrada;
 import com.example.version1.model.Entrada;
 import com.example.version1.model.Usuario;
 import com.example.version1.service.GestionEntradasService;
+import com.example.version1.repository.RepositoryUsuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,10 +23,12 @@ import java.util.Optional;
 public class GestionEntradasController {
 
     private final GestionEntradasService gestionEntradasService;
+    private final RepositoryUsuario repositoryUsuario;
 
     @Autowired
-    public GestionEntradasController(GestionEntradasService gestionEntradasService) {
+    public GestionEntradasController(GestionEntradasService gestionEntradasService, RepositoryUsuario repositoryUsuario) {
         this.gestionEntradasService = gestionEntradasService;
+        this.repositoryUsuario = repositoryUsuario;
     }
 
     @GetMapping("/mis-entradas")
@@ -143,6 +146,15 @@ public class GestionEntradasController {
         if (opt.isPresent() && !opt.get().isEmpty()) {
             model.addAttribute("error", opt.get());
             return "redirect:/entrada/" + id;
+        }
+
+        // Recargar usuario desde la base de datos para reflejar el saldo actualizado
+        try {
+            Optional<Usuario> refreshed = repositoryUsuario.findById(usuario.getId());
+            refreshed.ifPresent(u -> session.setAttribute("usuario", u));
+        } catch (Exception ex) {
+            // Si falla la recarga no bloqueamos la navegación; el saldo se actualizará en la próxima autenticación
+            System.out.println("Advertencia: no se pudo recargar usuario tras la devolución: " + ex.getMessage());
         }
 
         model.addAttribute("success", "Devolución realizada correctamente. Se reembolsó el importe.");

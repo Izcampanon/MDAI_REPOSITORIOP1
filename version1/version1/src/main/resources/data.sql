@@ -62,6 +62,16 @@ VALUES (105, 'Obra Infantil', '2025-12-20 17:00:00', 'Cia Infantil', 'Teatro Sur
 INSERT INTO EVENTO (ID, TITULO, FECHA, ARTISTA, DIRECCION, DESCRIPCION, AFORO, ESTADO, EDADPERMITIDA, PRECIO_GENERAL, PRECIO_VIP, PRECIO_CONSUMICION, LOCAL_ID)
 VALUES (106, 'Acústico Plaza', '2025-12-08 19:00:00', 'Cantautor Z', 'Plaza del Parque', 'Concierto acústico íntimo', 120, TRUE, 0, 12.0, 25.0, 2.0, 7);
 
+-- NUEVOS EVENTOS para locales de la UBICACION 1 (LOCAL_ID = 1 y LOCAL_ID = 9)
+INSERT INTO EVENTO (ID, TITULO, FECHA, ARTISTA, DIRECCION, DESCRIPCION, AFORO, ESTADO, EDADPERMITIDA, PRECIO_GENERAL, PRECIO_VIP, PRECIO_CONSUMICION, LOCAL_ID)
+VALUES (110, 'Noche Indie - Sala Azul', '2025-12-12 21:00:00', 'Indie Band', 'Sala Azul, Calle Centro 1', 'Concierto indie con bandas locales en la Sala Azul.', 250, TRUE, 16, 22.0, 40.0, 3.0, 1);
+
+INSERT INTO EVENTO (ID, TITULO, FECHA, ARTISTA, DIRECCION, DESCRIPCION, AFORO, ESTADO, EDADPERMITIDA, PRECIO_GENERAL, PRECIO_VIP, PRECIO_CONSUMICION, LOCAL_ID)
+VALUES (111, 'Electro Chill - Sala Azul', '2025-12-20 22:30:00', 'DJ Chillout', 'Sala Azul, Calle Centro 1', 'Sesión de electrónica suave para despedir el año.', 180, TRUE, 18, 18.0, 35.0, 4.0, 1);
+
+INSERT INTO EVENTO (ID, TITULO, FECHA, ARTISTA, DIRECCION, DESCRIPCION, AFORO, ESTADO, EDADPERMITIDA, PRECIO_GENERAL, PRECIO_VIP, PRECIO_CONSUMICION, LOCAL_ID)
+VALUES (112, 'Tributo Rock - Sala VIP', '2026-01-15 21:30:00', 'Tributo Rockers', 'Sala VIP, Calle Centro 1', 'Tributo a la mejor época del rock, en la Sala VIP.', 400, TRUE, 16, 30.0, 55.0, 5.0, 9);
+
 -- Entradas (asociadas a usuarios y eventos)
 INSERT INTO ENTRADA (ID, TIPO, CANTIDAD_CONSUMICIONES, USUARIO_ID, EVENTO_ID, DEVUELTA, NOMBRE_EVENTO, NOMBRE_USUARIO) VALUES (1001, 'GENERAL', 0, 1, 100, FALSE, 'Concierto Pedro', 'Pedro');
 INSERT INTO ENTRADA (ID, TIPO, CANTIDAD_CONSUMICIONES, USUARIO_ID, EVENTO_ID, DEVUELTA, NOMBRE_EVENTO, NOMBRE_USUARIO) VALUES (1002, 'VIP', 0, 1, 100, FALSE, 'Concierto Pedro', 'Pedro');
@@ -69,6 +79,13 @@ INSERT INTO ENTRADA (ID, TIPO, CANTIDAD_CONSUMICIONES, USUARIO_ID, EVENTO_ID, DE
 
 -- Compras (Compra_Entrada) y asociación con entradas
 INSERT INTO Compra_Entrada (ID, FECHA_COMPRA, PRECIO, USUARIO_ID) VALUES (3001, '2025-11-26 12:00:00', 30.0, 1);
+
+-- Asociar las entradas 1001 y 1002 a la compra 3001 (usuario 1)
+INSERT INTO compra_entrada_entardas (compra_entrada_id, entrada_id) VALUES (3001, 1001);
+INSERT INTO compra_entrada_entardas (compra_entrada_id, entrada_id) VALUES (3001, 1002);
+
+-- Ajustar saldo del usuario 1 para reflejar la compra (saldo original 100.0 - precio 30.0 = 70.0)
+UPDATE USUARIO SET SALDO = SALDO - 30.0 WHERE ID = 1;
 
 -- Position identity counters after the seeded max IDs to avoid PK conflicts with IDENTITY
 ALTER TABLE USUARIO ALTER COLUMN ID RESTART WITH 100;
